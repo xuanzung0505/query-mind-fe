@@ -6,7 +6,7 @@
   @keyframes bounce-custom {
     0%,
     100% {
-      transform: translateY(2px);
+      transform: translateY(4px);
     }
     50% {
       transform: translateY(-2px);
