@@ -7,7 +7,7 @@ async function serverApiFetch(url: string, options = {}) {
   // Check for 401 Unauthorized status
   if (response.status === 401) {
     console.warn("401 Unauthorized - Redirecting to sign-in...");
-    redirect("/");
+    redirect("/sign-in");
   }
   // Handle other HTTP errors (e.g., 500, 400, etc.)
   if (!response.ok) {
