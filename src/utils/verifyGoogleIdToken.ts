@@ -1,3 +1,4 @@
+import { GoogleVerifyError } from "@/classes/GoogleVerifyError";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -21,6 +22,6 @@ export default async function verifyGoogleIdToken(
   } catch (error) {
     console.error("ID Token verification failed:", error);
     // Throw an error that your API route can catch and return a 401 Unauthorized
-    throw new Error("Invalid or expired Google ID Token.");
+    throw new GoogleVerifyError("Invalid or expired Google ID Token.");
   }
 }

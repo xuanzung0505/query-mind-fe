@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 /**
  * A centralized utility to make API calls and handle global errors like 401.
  */
-async function serverApiFetch(url: string, options = {}) {
+async function serverApiFetch<T>(url: string, options = {}) {
   const response = await fetch(url, options);
   // Check for 401 Unauthorized status
   if (response.status === 401) {
@@ -17,7 +17,7 @@ async function serverApiFetch(url: string, options = {}) {
     );
   }
 
-  return response.json();
+  return response.json() as Promise<T>;
 }
 
 export { serverApiFetch };

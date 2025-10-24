@@ -37,15 +37,20 @@ function signJwt(
 }
 
 /**
- * Verifies a JWT and returns the decoded payload typed as DecodedUserInfoType.
+ * Verifies a JWT and returns the decoded payload.
  * Returns null when verification fails.
  */
 function verifyJwt<T>(token: string, SECRET: string | undefined) {
   if (!SECRET) {
     throw new Error("SECRET is not set");
   }
-  const decoded = jwt.verify(token, SECRET) as T;
-  return decoded;
+  return jwt.verify(token, SECRET, function (err, decoded) {
+    if (err) {
+      console.log("error when verifying jwt:", err);
+      return null;
+    }
+    return decoded;
+  }) as T | null;
 }
 
 export { signJwt, signAccessToken, signRefreshToken, verifyJwt };
