@@ -1,7 +1,7 @@
 import verifyAuthToken from "./verifyAuthToken";
 import { cookies, headers } from "next/headers";
 
-export default async function customMiddleware(request: Request) {
+export default async function customMiddleware() {
   console.log("Custom MIDDLEWARE runs in Nodejs environment");
   try {
     const [cookieStore, headersList] = await Promise.all([
