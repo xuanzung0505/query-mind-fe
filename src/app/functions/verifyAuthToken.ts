@@ -60,6 +60,7 @@ export default async function verifyAuthToken(
       refresh_token: signRefreshToken(userDB),
     };
     await setBulkAuthTokenCookies(credentials);
+    return credentials;
   }
   throw new EmptyTokensError();
 }
