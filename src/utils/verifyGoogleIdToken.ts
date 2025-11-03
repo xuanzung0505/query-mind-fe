@@ -1,4 +1,4 @@
-import { GoogleVerifyError } from "@/classes/GoogleVerifyError";
+import { GoogleVerifyError } from "@/classes/errors";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;

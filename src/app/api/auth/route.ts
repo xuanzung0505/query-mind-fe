@@ -1,11 +1,7 @@
-import { signAccessToken, signRefreshToken, verifyJwt } from "@/utils/jwt";
-import { UserType } from "@/types/UserType";
-import { createOrGetUser } from "@/utils/db";
-import verifyGoogleIdToken from "@/utils/verifyGoogleIdToken";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
-import { setBulkAuthTokenCookies } from "@/app/functions/setAuthTokenCookies";
-import { ClientTokenType } from "@/types/ClientTokenType";
-import { GoogleVerifyError } from "@/classes/GoogleVerifyError";
+import { EmptyTokensError, GoogleVerifyError } from "@/classes/errors";
+import customMiddleware from "@/app/functions/customMiddleware";
+import { MessageEnum } from "@/const/MessageEnum";
 
 /**
  * -> PAYLOAD: {google_token?: string, access_token?: string, refresh_token?: string}
@@ -28,75 +24,22 @@ import { GoogleVerifyError } from "@/classes/GoogleVerifyError";
  */
 export async function POST(request: Request) {
   // Parse the request body
-  const body = await request.json();
-  const { google_token, access_token, refresh_token } = body;
-  let credentials: Omit<ClientTokenType, "google_token"> = {
-    access_token,
-    refresh_token,
-  };
-
   try {
-    // verify the access token
-    if (
-      access_token &&
-      verifyJwt<UserType>(access_token, process.env.JWT_ACCESS_TOKEN_SECRET)
-    ) {
-      return new Response(JSON.stringify(credentials), {
-        status: StatusCodeEnum.OK,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    // verify the refresh token
-    if (refresh_token) {
-      const userPayload = verifyJwt<UserType>(
-        refresh_token,
-        process.env.JWT_REFRESH_TOKEN_SECRET
-      );
-      if (userPayload) {
-        // issue new access token
-        const new_access_token = signAccessToken(userPayload);
-        credentials = {
-          refresh_token,
-          access_token: new_access_token,
-        };
-        await setBulkAuthTokenCookies(credentials);
-        return new Response(JSON.stringify(credentials), {
-          status: StatusCodeEnum.OK,
-          headers: { "Content-Type": "application/json" },
-        });
-      }
-    }
-    // verify the google token
-    if (google_token) {
-      const googleUserInfo = await verifyGoogleIdToken(google_token);
-      const { sub, email, given_name, name, picture } = googleUserInfo;
-      // fetch/create user from DB
-      const userDB = await createOrGetUser({
-        googleSub: sub,
-        email: email || "",
-        fullName: given_name || "",
-        name: name || "",
-        avatarUrl: picture || "",
-      });
-      // issue new pair of access_token and refresh_token
-      credentials = {
-        access_token: signAccessToken(userDB),
-        refresh_token: signRefreshToken(userDB),
-      };
-      await setBulkAuthTokenCookies(credentials);
-      return new Response(JSON.stringify(credentials), {
-        status: StatusCodeEnum.OK,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    throw new Error("Empty tokens");
+    const credentials = await customMiddleware(request);
+    return new Response(JSON.stringify(credentials), {
+      status: StatusCodeEnum.OK,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     // redirect to /sign-in page
-    console.error("Token verification failed:", error);
-    if (error instanceof GoogleVerifyError)
-      return new Response(JSON.stringify({ message: "Invalid credentials." }), {
-        status: StatusCodeEnum.UNAUTHORIZED,
-      });
+    if (error instanceof GoogleVerifyError || error instanceof EmptyTokensError)
+      return new Response(
+        JSON.stringify({ message: MessageEnum.INVALID_CREDENTIALS }),
+        {
+          status: StatusCodeEnum.UNAUTHORIZED,
+        }
+      );
+    console.error(error);
     return new Response(JSON.stringify({ message: "Server error." }), {
       status: StatusCodeEnum.INTERNAL_SERVER_ERROR,
     });
