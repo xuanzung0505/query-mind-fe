@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 
 /**
- * A centralized utility to make API calls and handle global errors like 401.
+ * Client fetching with additional headers such as authorization, which server fetching doesn't have
  */
 async function clientApiFetch<T>(
   url: string,
@@ -30,7 +30,6 @@ async function clientApiFetch<T>(
       errorBody.error || `HTTP error! status: ${response.status}`
     );
   }
-
   return response.json() as Promise<T>;
 }
 
