@@ -8,7 +8,7 @@ import { useEffect } from "react";
 //   description: "Query Mind index page",
 // };
 
-export default function Home() {
+export default function HomePage() {
   useEffect(() => {
     clientApiFetch<unknown>(`${process.env.NEXT_PUBLIC_HOST_URL}/api/users`, {
       method: "GET",
@@ -19,5 +19,5 @@ export default function Home() {
       console.log(response);
     });
   }, []);
-  return <div className="">hehe</div>;
+  return <div className="">Home page</div>;
 }
