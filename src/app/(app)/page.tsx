@@ -40,7 +40,9 @@ export default function HomePage() {
           Engage with Query Mind to get quick answers, brainstorm ideas, or
           explore new topics. Your AI conversations will appear here.
         </div>
-        <Button className="mt-10 px-6 sm:px-8 md:px-10 bg-primary text-primary-foreground">New Conversation</Button>
+        <Button className="mt-10 px-6 sm:px-8 md:px-10 bg-primary-bg text-primary-foreground">
+          New Conversation
+        </Button>
       </div>
     </div>
   );
