@@ -14,7 +14,7 @@ const tokenMaxAge = {
   access_token:
     ms(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN as StringValue) / 1000,
   refresh_token:
-    ms(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN as StringValue) / 1000,
+    ms(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN as StringValue) / 1000,
 };
 
 export default async function verifyAuthToken(
