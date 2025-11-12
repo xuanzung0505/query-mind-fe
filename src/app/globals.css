@@ -13,6 +13,8 @@
     }
   }
 
+  --breakpoint-xs: 425px;
+
   --color-primary-bg: #0076D2FF;
   --color-primary-foreground: #FFF;
 }
