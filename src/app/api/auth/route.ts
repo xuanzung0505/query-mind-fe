@@ -26,7 +26,7 @@ import { MessageEnum } from "@/const/MessageEnum";
 export async function POST(request: Request) {
   // Parse the request body
   try {
-    const credentials = await customMiddleware();
+    const credentials = await customMiddleware(request);
     return new Response(JSON.stringify(credentials), {
       status: StatusCodeEnum.OK,
       headers: { "Content-Type": "application/json" },

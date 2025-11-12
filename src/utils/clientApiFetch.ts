@@ -5,19 +5,8 @@ import { redirect } from "next/navigation";
 /**
  * Client fetching with additional headers such as authorization, which server fetching doesn't have
  */
-async function clientApiFetch<T>(
-  url: string,
-  options: { method: string; headers: undefined | Record<string, string> }
-) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      ...(options.headers ?? {}),
-      ...{
-        authorization: `Bearer ${localStorage.getItem("google_token")}`,
-      },
-    },
-  });
+async function clientApiFetch<T>(url: string, options: RequestInit) {
+  const response = await fetch(url, options);
   // Check for 401 Unauthorized status
   if (response.status === 401) {
     console.warn("401 Unauthorized - Redirecting to sign-in...");

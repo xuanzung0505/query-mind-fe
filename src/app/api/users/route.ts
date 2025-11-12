@@ -1,14 +1,14 @@
 import customMiddleware from "@/app/functions/customMiddleware";
-import { GoogleVerifyError } from "@/classes/errors";
+import { EmptyTokensError, GoogleVerifyError } from "@/classes/errors";
 import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: Request) {
   try {
-    await customMiddleware();
+    await customMiddleware(request);
   } catch (error) {
-    if (error instanceof GoogleVerifyError)
+    if (error instanceof GoogleVerifyError || error instanceof EmptyTokensError)
       return new Response(MessageEnum.INVALID_CREDENTIALS, {
         status: StatusCodeEnum.UNAUTHORIZED,
         headers: { "Content-Type": "application/json" },

@@ -1,18 +1,12 @@
 "use server";
 
 import { ClientTokenType } from "@/types/ClientTokenType";
-import ms, { StringValue } from "ms";
+import { TokenMaxAgeType } from "@/types/TokenMaxAgeType";
 import { cookies } from "next/headers";
 
-const tokenMaxAges: Record<string, number> = {
-  access_token:
-    ms(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN as StringValue) / 1000,
-  refresh_token:
-    ms(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN as StringValue) / 1000,
-};
-
 const setBulkAuthTokenCookies = async (
-  token: Omit<ClientTokenType, "google_token">
+  token: ClientTokenType,
+  tokenMaxAge: TokenMaxAgeType
 ) => {
   const retrievedCookies = await cookies();
 
@@ -21,10 +15,10 @@ const setBulkAuthTokenCookies = async (
       return {
         title: token_title,
         token: token_value,
-        maxAge: tokenMaxAges[token_title],
+        maxAge: tokenMaxAge[token_title] as number,
       };
     }, []);
-
+    
   tokens.forEach(({ title, token, maxAge }) => {
     retrievedCookies.set(title, token, {
       httpOnly: true, // Recommended for security, prevents client-side JavaScript access

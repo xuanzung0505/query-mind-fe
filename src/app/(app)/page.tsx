@@ -1,26 +1,24 @@
-"use client";
 import { Button } from "@/components/ui/button";
-import { clientApiFetch } from "@/utils/clientApiFetch";
 import Image from "next/image";
+import { serverApiFetch } from "@/utils/serverApiFetch";
 // import type { Metadata } from "next";
-import { useEffect } from "react";
 
 // export const metadata: Metadata = {
 //   title: "Query Mind",
 //   description: "Query Mind index page",
 // };
 
-export default function HomePage() {
-  useEffect(() => {
-    clientApiFetch<unknown>(`${process.env.NEXT_PUBLIC_HOST_URL}/api/users`, {
+export default async function HomePage() {
+  // TEST SUSPENSE BOUNDARY
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const users = await serverApiFetch<unknown>(
+    `${process.env.NEXT_PUBLIC_HOST_URL}/api/users`,
+    {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((response) => {
-      console.log(response);
-    });
-  }, []);
+      credentials: "include",
+    }
+  );
+
   return (
     <div className="homepage p-2">
       <div className="flex flex-col items-center justify-center my-8">
