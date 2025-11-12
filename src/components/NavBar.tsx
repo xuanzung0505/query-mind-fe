@@ -27,7 +27,10 @@ function NavBar() {
   ];
 
   return (
-    <div className="bg-[#0076D2FF] p-2 md:px-4 flex text-white items-center justify-between lg:grid lg:grid-cols-3 sticky top-0">
+    <div
+      className={`bg-[#0076D2FF] p-2 md:px-4 flex text-white items-center justify-between lg:grid lg:grid-cols-3 
+        sticky top-0 z-[1]`}
+    >
       <BrandButtonNavBar {...{ pathname, className: "" }} />
       <div className="flex text-sm sm:text-base sm:gap-2 md:gap-4 justify-center lg:gap-6">
         {menuList.map((menu, index) => (

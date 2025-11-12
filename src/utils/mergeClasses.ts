@@ -1,3 +1,3 @@
 export default function mergeClasses(...classList: string[]) {
-  return classList.join(" ");
+  return classList.join(" ").trim();
 }
