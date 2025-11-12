@@ -1,0 +1,19 @@
+// .vscode/launch.json
+{
+  "version": "1.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "name": "Next.js: debug server-side",
+      "request": "launch",
+      "command": "npm run dev" // or "npm run debug" if you created a separate script
+    },
+    // You can also add a client-side config for full-stack debugging
+    {
+      "type": "chrome",
+      "name": "Next.js: debug client-side",
+      "request": "launch",
+      "url": "http://localhost:3000"
+    }
+  ]
+}
