@@ -10,7 +10,7 @@ function Loading() {
           <Skeleton className="h-12 w-72 xs:h-10 xs:w-96 sm:h-[50px] sm:w-[500px]" />
           <Skeleton className="h-4 w-72 xs:h-5 xs:w-96 sm:h-[25px] sm:w-[500px]" />
           <Skeleton className="h-4 w-72 xs:h-5 xs:w-96 sm:h-[25px] sm:w-[500px]" />
-          <Skeleton className="h-8 w-32 xs:h-10 xs:w-40 m-auto mt-4 sm:h-12 sm:w-[200px]" />
+          <Skeleton className="h-6 w-32 xs:h-10 xs:w-40 m-auto mt-4 sm:h-12 sm:w-[200px]" />
         </div>
       </div>
     </div>
