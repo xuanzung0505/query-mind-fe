@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { serverApiFetch } from "@/utils/serverApiFetch";
+import { Plus } from "lucide-react";
+import PrimaryButton from "@/components/PrimaryButton";
 // import type { Metadata } from "next";
 
 // export const metadata: Metadata = {
@@ -38,9 +39,12 @@ export default async function HomePage() {
           Engage with Query Mind to get quick answers, brainstorm ideas, or
           explore new topics. Your AI conversations will appear here.
         </div>
-        <Button className="mt-10 px-6 sm:px-8 md:px-10 bg-primary-bg text-primary-foreground">
-          New Conversation
-        </Button>
+        <div className="mt-10">
+          <PrimaryButton>
+            <Plus />
+            New Conversation
+          </PrimaryButton>
+        </div>
       </div>
     </div>
   );

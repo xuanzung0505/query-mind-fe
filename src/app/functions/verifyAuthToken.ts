@@ -5,7 +5,7 @@ import { UserType } from "@/types/UserType";
 import { signAccessToken, signRefreshToken, verifyJwt } from "@/utils/jwt";
 import { setBulkAuthTokenCookies } from "./setAuthTokenCookies";
 import verifyGoogleIdToken from "@/utils/verifyGoogleIdToken";
-import { createOrGetUser } from "@/utils/db";
+import { createOrGetUser } from "@/db/users";
 import { EmptyTokensError } from "@/classes/errors";
 import { jwtDecode } from "jwt-decode";
 import ms, { StringValue } from "ms";
