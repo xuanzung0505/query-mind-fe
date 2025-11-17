@@ -25,6 +25,7 @@ export default async function verifyAuthToken(
   let credentials: ClientTokenType = {
     access_token,
     refresh_token,
+    google_token,
   };
 
   // verify the access token
@@ -42,21 +43,12 @@ export default async function verifyAuthToken(
     );
     if (userPayload) {
       // issue new access token
-      const { exp: refresh_token_exp } = userPayload;
       const new_access_token = signAccessToken(userPayload);
-      const refresh_token_maxAge =
-        refresh_token_exp !== undefined
-          ? refresh_token_exp * 1000 - Date.now()
-          : 0;
       credentials = {
-        refresh_token,
         access_token: new_access_token,
       };
-      await setBulkAuthTokenCookies(credentials, {
-        ...tokenMaxAge,
-        refresh_token: refresh_token_maxAge,
-      });
-      return credentials;
+      await setBulkAuthTokenCookies(credentials, tokenMaxAge);
+      return { ...credentials, refresh_token };
     }
   }
   // verify the google token

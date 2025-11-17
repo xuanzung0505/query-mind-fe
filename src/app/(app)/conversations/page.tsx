@@ -22,7 +22,6 @@ export default function ConversationsPage() {
       `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations`,
       {
         method: "GET",
-        credentials: "include",
       }
     ).then((data) => {
       setConversations(data);
