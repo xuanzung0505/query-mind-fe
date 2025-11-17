@@ -9,7 +9,7 @@ function signAccessToken(payload: Record<string, unknown>): string {
   ) {
     throw new Error("SECRET is not set");
   }
-  const refinedPayload = omit(payload, ["exp"]);
+  const refinedPayload = omit(payload, ["exp", "iat"]);
   return jwt.sign(refinedPayload, process.env.JWT_ACCESS_TOKEN_SECRET, {
     expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN as StringValue,
   });
@@ -22,7 +22,8 @@ function signRefreshToken(payload: Record<string, unknown>): string {
   ) {
     throw new Error("SECRET is not set");
   }
-  return jwt.sign(payload, process.env.JWT_REFRESH_TOKEN_SECRET, {
+  const refinedPayload = omit(payload, ["exp", "iat"]);
+  return jwt.sign(refinedPayload, process.env.JWT_REFRESH_TOKEN_SECRET, {
     expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN as StringValue,
   });
 }
