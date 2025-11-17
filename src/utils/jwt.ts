@@ -1,4 +1,5 @@
 import * as jwt from "jsonwebtoken";
+import omit from "lodash.omit";
 import { StringValue } from "ms";
 
 function signAccessToken(payload: Record<string, unknown>): string {
@@ -8,7 +9,8 @@ function signAccessToken(payload: Record<string, unknown>): string {
   ) {
     throw new Error("SECRET is not set");
   }
-  return jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, {
+  const refinedPayload = omit(payload, ["exp"]);
+  return jwt.sign(refinedPayload, process.env.JWT_ACCESS_TOKEN_SECRET, {
     expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN as StringValue,
   });
 }

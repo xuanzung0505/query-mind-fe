@@ -1,3 +1,5 @@
+"use client";
+
 import PrimaryButton from "@/components/PrimaryButton";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,18 +10,24 @@ import {
   ItemActions,
 } from "@/components/ui/item";
 import { ConversationType } from "@/types/ConversationType";
+import { clientApiFetch } from "@/utils/clientApiFetch";
 import dayjs from "@/utils/dayjs";
-import { serverApiFetch } from "@/utils/serverApiFetch";
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export default async function ConversationsPage() {
-  const conversations = await serverApiFetch<ConversationType[]>(
-    `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations`,
-    {
-      method: "GET",
-      credentials: "include",
-    }
-  );
+export default function ConversationsPage() {
+  const [conversations, setConversations] = useState<ConversationType[]>([]);
+  useEffect(() => {
+    clientApiFetch<ConversationType[]>(
+      `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    ).then((data) => {
+      setConversations(data);
+    });
+  }, []);
 
   return (
     <div className="conversation-page p-2 sm:px-12 md:px-32">

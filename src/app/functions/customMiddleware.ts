@@ -24,6 +24,7 @@ export default async function customMiddleware(request: Request) {
     );
     return credentials;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 }
