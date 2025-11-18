@@ -14,12 +14,7 @@ import dayjs from "@/utils/dayjs";
 import { useQuery } from "@tanstack/react-query";
 
 function ConversationsClientList() {
-  const {
-    isLoading,
-    error,
-    data: conversations,
-    isFetching,
-  } = useQuery({
+  const { isLoading, data: conversations } = useQuery({
     queryKey: ["conversations"],
     queryFn: () =>
       clientApiFetch<ConversationType[]>(
@@ -59,7 +54,9 @@ function ConversationsClientList() {
             key={conversation.id}
           >
             <ItemContent>
-              <ItemTitle className="text-xs xs:text-base">{conversation.title}</ItemTitle>
+              <ItemTitle className="text-xs xs:text-base">
+                {conversation.title}
+              </ItemTitle>
               <ItemDescription className="text-neutral-500 text-xs xs:text-base">
                 {conversation.lastMessage}
               </ItemDescription>

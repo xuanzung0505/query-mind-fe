@@ -22,7 +22,7 @@ import { MessageEnum } from "@/const/MessageEnum";
  *      2.2. refresh_token is invalid or not exist in the payload -> generate both
  * 3.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export async function POST(request: Request) {
   // Parse the request body
   try {
