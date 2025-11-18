@@ -41,9 +41,17 @@ function ConversationsClientList() {
       </>
     );
 
+  if (Array.isArray(conversations) && conversations.length == 0)
+    return (
+      <div className="text-neutral-500 italic text-xs xs:text-base">
+        It seems quiet here...
+      </div>
+    );
+
   return (
     <>
       {Array.isArray(conversations) &&
+        conversations.length > 0 &&
         conversations.map((conversation) => (
           <Item
             className={`border-1 shadow-md cursor-pointer transition-transform hover:translate-x-2
@@ -51,12 +59,12 @@ function ConversationsClientList() {
             key={conversation.id}
           >
             <ItemContent>
-              <ItemTitle>{conversation.title}</ItemTitle>
-              <ItemDescription className="text-neutral-500">
+              <ItemTitle className="text-xs xs:text-base">{conversation.title}</ItemTitle>
+              <ItemDescription className="text-neutral-500 text-xs xs:text-base">
                 {conversation.lastMessage}
               </ItemDescription>
             </ItemContent>
-            <ItemActions className="text-neutral-500">
+            <ItemActions className="text-neutral-500 text-xs xs:text-base">
               {dayjs(conversation.lastMessageCreatedAt).fromNow()}
             </ItemActions>
           </Item>
