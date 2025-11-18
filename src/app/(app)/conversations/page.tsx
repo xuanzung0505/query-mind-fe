@@ -13,7 +13,7 @@ export default function ConversationsPage() {
           <span
             className={`text-[20px] sm:text-[30px] font-extrabold tracking-tight bg-clip-text`}
           >
-            Conversations
+            Your conversations
           </span>
           <PrimaryButton>
             <Plus />
@@ -24,7 +24,7 @@ export default function ConversationsPage() {
           <Input
             type="text"
             placeholder="Search conversation..."
-            className="text-xs xs:text-base"
+            className="responsive-text"
           />
         </div>
         <div className="flex w-full mt-4 flex-col gap-6">

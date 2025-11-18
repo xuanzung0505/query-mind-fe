@@ -15,6 +15,12 @@
 
   --breakpoint-xs: 425px;
 
-  --color-primary-bg: #0076D2FF;
-  --color-primary-foreground: #FFF;
+  --color-primary-bg: #0076d2ff;
+  --color-primary-foreground: #fff;
+}
+
+@layer components {
+  .responsive-text {
+    @apply text-xs xs:text-sm;
+  }
 }

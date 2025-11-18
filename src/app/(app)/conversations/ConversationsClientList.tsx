@@ -38,7 +38,7 @@ function ConversationsClientList() {
 
   if (Array.isArray(conversations) && conversations.length == 0)
     return (
-      <div className="text-neutral-500 italic text-xs xs:text-base">
+      <div className="text-neutral-500 italic responsive-text">
         It seems quiet here...
       </div>
     );
@@ -54,14 +54,19 @@ function ConversationsClientList() {
             key={conversation.id}
           >
             <ItemContent>
-              <ItemTitle className="text-xs xs:text-base">
+              <ItemTitle className="responsive-text">
                 {conversation.title}
               </ItemTitle>
-              <ItemDescription className="text-neutral-500 text-xs xs:text-base">
+              <ItemDescription className="text-neutral-500 responsive-text">
                 {conversation.lastMessage}
               </ItemDescription>
+              {conversation.projectId && (
+                <ItemDescription className="responsive-text">
+                  In <span className="font-bold">{conversation.project?.title}</span>
+                </ItemDescription>
+              )}
             </ItemContent>
-            <ItemActions className="text-neutral-500 text-xs xs:text-base">
+            <ItemActions className="text-neutral-500 responsive-text">
               {dayjs(conversation.lastMessageCreatedAt).fromNow()}
             </ItemActions>
           </Item>
