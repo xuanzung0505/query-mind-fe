@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import {
   Item,
   ItemContent,
@@ -28,6 +29,7 @@ function ConversationsClientList() {
   if (isLoading)
     return (
       <>
+        <Skeleton className="h-12 sm:h-[30px]" />
         <Skeleton className="h-20 sm:h-[70px]" />
         <Skeleton className="h-20 sm:h-[70px]" />
         <Skeleton className="h-20 sm:h-[70px]" />
@@ -45,6 +47,11 @@ function ConversationsClientList() {
 
   return (
     <>
+      <Input
+        type="text"
+        placeholder="Search conversation..."
+        className="responsive-text"
+      />
       {Array.isArray(conversations) &&
         conversations.length > 0 &&
         conversations.map((conversation) => (
@@ -62,7 +69,10 @@ function ConversationsClientList() {
               </ItemDescription>
               {conversation.projectId && (
                 <ItemDescription className="responsive-text">
-                  In <span className="font-bold">{conversation.project?.title}</span>
+                  In{" "}
+                  <span className="font-bold">
+                    {conversation.project?.title}
+                  </span>
                 </ItemDescription>
               )}
             </ItemContent>

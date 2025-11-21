@@ -10,13 +10,11 @@ function LayoutWithNavBar({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div className="bg-neutral-100">
       <NavBar />
       {children}
 
-      <footer
-        className="flex gap-4 justify-between p-2 text-sm sm:text-base md:text-xl mt-6 md:w-[520px] m-auto"
-      >
+      <footer className="flex gap-4 justify-between p-2 xs:px-12 md:px-32 w-screen text-sm sm:text-base md:text-xl mt-6 m-auto bg-white">
         <div className="flex gap-2">
           <Link href={"/about"}>
             <Button variant={"link"} className="cursor-pointer">
@@ -43,7 +41,7 @@ function LayoutWithNavBar({
           </Link>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
 

@@ -17,6 +17,7 @@
 
   --color-primary-bg: #0076d2ff;
   --color-primary-foreground: #fff;
+  --color-card: white;
 }
 
 @layer components {

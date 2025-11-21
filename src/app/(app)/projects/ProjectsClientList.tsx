@@ -18,14 +18,6 @@ import Image from "next/image";
 
 const VISIBLE_COLLABORATORS_SIZE = 2;
 
-function Container() {
-  return (
-    <div className="mt-8">
-      <ProjectsClientList />
-    </div>
-  );
-}
-
 function ProjectsClientList() {
   const { isLoading, data: projects } = useQuery({
     queryKey: ["projects"],
@@ -52,13 +44,11 @@ function ProjectsClientList() {
 
   return (
     <>
-      <div className="mt-8">
-        <Input
-          type="text"
-          placeholder="Search project..."
-          className="responsive-text"
-        />
-      </div>
+      <Input
+        type="text"
+        placeholder="Search project..."
+        className="responsive-text"
+      />
       <div className="flex flex-wrap w-full mt-4 gap-3">
         {Array.isArray(projects) &&
           projects.map((project, index) => (
@@ -138,4 +128,4 @@ function ProjectsClientList() {
   );
 }
 
-export default Container;
+export default ProjectsClientList;
