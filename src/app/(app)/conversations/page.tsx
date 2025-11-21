@@ -14,7 +14,7 @@ export default function ConversationsPage() {
           >
             Your conversations
           </span>
-          <PrimaryButton>
+          <PrimaryButton additionalClassName="flex items-center gap-2">
             <Plus />
             <span className="hidden xs:block">New Conversation</span>
           </PrimaryButton>
