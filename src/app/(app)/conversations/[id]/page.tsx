@@ -10,14 +10,15 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import {
+  Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Textarea } from "@/components/ui/textarea";
 import dayjs from "@/utils/dayjs";
-import { Collapsible } from "@radix-ui/react-collapsible";
 import { Send } from "lucide-react";
 import { useState } from "react";
+import ConversationsSheet from "./ConversationsSheet";
 
 const currentUserId = "d68f";
 
@@ -60,7 +61,8 @@ function ConversationDetailsPage() {
              h-[80vh] p-0`}
       >
         <CardHeader className="p-0 gap-0">
-          <CardTitle className="h-[32px] flex items-center px-6 py-6">
+          <CardTitle className="h-[32px] flex items-center px-2 py-6 gap-2">
+            <ConversationsSheet></ConversationsSheet>
             <span className="flex-9 line-clamp-2">
               AI Model Evaluation - Q1 2024
             </span>
