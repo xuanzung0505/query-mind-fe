@@ -105,9 +105,8 @@ function ConversationDetailsPage() {
         </CardContent>
         <Divider />
         <CardFooter className="flex flex-col items-start p-4">
-          <div className="w-full flex gap-2">
+            <div className="w-full flex gap-2">
             <Textarea
-              wrap="off"
               placeholder="Type your message here."
               className="min-h-9 max-h-44 responsive-text"
               value={message}
@@ -115,7 +114,16 @@ function ConversationDetailsPage() {
                 setMessage(e.target.value);
               }}
               onKeyDown={(e) => {
+                // Detect touch/mobile devices — don't submit on Enter there.
+                const isTouchDevice =
+                  typeof window !== "undefined" &&
+                  ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
                 if (e.key === "Enter" && !e.shiftKey) {
+                  if (isTouchDevice) {
+                    // allow newline on mobile keyboards
+                    return;
+                  }
                   e.preventDefault();
                   handleSendMessage();
                 }
