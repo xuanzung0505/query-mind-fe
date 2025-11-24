@@ -3,15 +3,15 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import mergeClasses from "@/utils/mergeClasses";
 import Brand from "./Brand";
+import { cn } from "@/lib/utils";
 
 const BrandButtonNavBar = (props: {
   className: string;
   pathname: string;
   [key: string]: string;
 }) => {
-  const mergedClassName = mergeClasses(
+  const mergedClassName = cn(
     props.className ?? "",
     props.pathname === "/" ? "opacity-100" : "opacity-80"
   );

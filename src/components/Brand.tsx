@@ -1,15 +1,13 @@
 import React from "react";
 import BrandMark from "./BrandMark";
 import Link from "next/link";
-import mergeClasses from "@/utils/mergeClasses";
+import { cn } from "@/lib/utils";
 
 function Brand(props: { [key: string]: string }) {
   const { className } = props;
 
   return (
-    <div
-      className={mergeClasses("hover:opacity-100", className)}
-    >
+    <div className={cn("hover:opacity-100", className)}>
       <Link href={"/"}>
         <div className="inline-flex items-center">
           <BrandMark className="h-5 w-5 sm:w-7 sm:h-7 md:h-9 md:w-9" />
