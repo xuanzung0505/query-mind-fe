@@ -31,7 +31,7 @@ function LayoutWithNavBar({
           <Link href={"https://github.com/xuanzung0505/query-mind-fe"}>
             <Button variant={"ghost"} size={"icon"} className="cursor-pointer">
               <Image
-                src={"github-mark.svg"}
+                src={"/github-mark.svg"}
                 width={500}
                 height={500}
                 alt="github logo"
