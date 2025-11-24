@@ -19,6 +19,7 @@ import dayjs from "@/utils/dayjs";
 import { Send } from "lucide-react";
 import { useState } from "react";
 import ConversationsSheet from "./ConversationsSheet";
+import { cn } from "@/lib/utils";
 
 const currentUserId = "d68f";
 
@@ -47,11 +48,14 @@ const fakeMessages = [
 
 function ConversationDetailsPage() {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<typeof fakeMessages>(fakeMessages);
 
   const handleSendMessage = () => {
-    console.log(message);
-    setMessages([...messages, message]);
+    setMessages([
+      { text: message, createdAt: Date(), sentById: "d68f" },
+      ...messages,
+    ]);
+    setMessage("");
   };
 
   return (
@@ -69,8 +73,8 @@ function ConversationDetailsPage() {
           </CardTitle>
         </CardHeader>
         <Divider />
-        <CardContent className="p-2 md:p-4 flex-1 overflow-scroll responsive-text flex justify-start flex-col-reverse gap-2">
-          {fakeMessages.map(({ text, sentById, createdAt }, index) => (
+        <CardContent className="p-2 md:p-4 flex-1 overflow-y-scroll responsive-text flex justify-start flex-col-reverse gap-2">
+          {messages.map(({ text, sentById, createdAt }, index) => (
             <Collapsible key={index} className={`flex flex-col-reverse gap-2`}>
               <div
                 className={
@@ -79,11 +83,12 @@ function ConversationDetailsPage() {
               >
                 <CollapsibleTrigger>
                   <div
-                    className={
+                    className={cn(
                       sentById == currentUserId
-                        ? "bg-primary-bg text-white rounded-tr-sm rounded-xl p-4"
-                        : "bg-neutral-200 rounded-xl p-4"
-                    }
+                        ? "bg-primary-bg text-white rounded-xl rounded-tr-none p-4 float-right"
+                        : "bg-neutral-200 rounded-xl p-4 float-left",
+                      "text-left sm:max-w-[500px]"
+                    )}
                   >
                     {text}
                   </div>
@@ -102,11 +107,18 @@ function ConversationDetailsPage() {
         <CardFooter className="flex flex-col items-start p-4">
           <div className="w-full flex gap-2">
             <Textarea
+              wrap="off"
               placeholder="Type your message here."
               className="min-h-9 max-h-44 responsive-text"
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
               }}
             />
             <PrimaryButton
