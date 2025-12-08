@@ -12,4 +12,19 @@ const getConversations = async () => {
   return conversations;
 };
 
-export { getConversations };
+const getConversationsById = async ({
+  conversationId,
+}: {
+  conversationId: string;
+}) => {
+  const res = await fetch(BACKEND_URL + `/conversations/${conversationId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const conversation = (await res.json()) as ConversationType;
+  return conversation;
+};
+
+export { getConversations, getConversationsById };

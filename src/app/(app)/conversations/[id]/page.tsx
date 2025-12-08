@@ -20,8 +20,33 @@ import { clientApiFetch } from "@/utils/clientApiFetch";
 import fetchSseStream, { StreamStatus } from "@/utils/fetchSseStream";
 import useRetrieveAIReply from "./useRetrieveAIReply";
 import OpenAI from "openai";
+import { ConversationType } from "@/types/ConversationType";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const currentUserId = "d68f";
+
+function useConversationDetails({
+  conversationId,
+}: {
+  conversationId: string;
+}) {
+  const {
+    isLoading,
+    isFetched,
+    data: conversation,
+  } = useQuery({
+    queryKey: [`conversations/${conversationId}`],
+    queryFn: () =>
+      clientApiFetch<ConversationType>(
+        `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversationId}`,
+        {
+          method: "GET",
+        }
+      ),
+  });
+
+  return { isLoading, isFetched, conversation };
+}
 
 function ConversationDetailsPage({
   params,
@@ -31,6 +56,8 @@ function ConversationDetailsPage({
   const { id: conversationId } = use(params);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const { isLoading: isConversationLoading, conversation } =
+    useConversationDetails({ conversationId });
   const {
     isLoading,
     isFetched,
@@ -115,7 +142,11 @@ function ConversationDetailsPage({
           <CardTitle className="h-[32px] flex items-center px-2 py-6 gap-2">
             <ConversationsSheet></ConversationsSheet>
             <span className="flex-9 line-clamp-2">
-              AI Model Evaluation - Q1 2024
+              {isConversationLoading ? (
+                <Skeleton className="h-4 w-[200px]" />
+              ) : (
+                <>{conversation?.title}</>
+              )}
             </span>
           </CardTitle>
         </CardHeader>
