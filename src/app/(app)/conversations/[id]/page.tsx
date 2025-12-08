@@ -36,10 +36,10 @@ function ConversationDetailsPage({
     isFetched,
     data: queriedMessages,
   } = useQuery({
-    queryKey: ["messages"],
+    queryKey: [`conversations/${conversationId}/messages`],
     queryFn: () =>
       clientApiFetch<MessageType[]>(
-        `${process.env.NEXT_PUBLIC_HOST_URL}/api/messages`,
+        `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversationId}/messages`,
         {
           method: "GET",
         }
@@ -105,7 +105,6 @@ function ConversationDetailsPage({
     }
   }, [AIStatus, setIncomingAIWord, incomingAIWord, conversationId, messages]);
 
-
   return (
     <div className="conversation-details-page p-2">
       <Card
@@ -123,7 +122,13 @@ function ConversationDetailsPage({
         <Divider />
         <CardContent className="p-2 md:p-4 flex-1 overflow-y-scroll responsive-text flex justify-start flex-col-reverse gap-2 cursor-default">
           <MessagesClientList
-            {...{ messages, isLoading, currentUserId, incomingAIWord, AIStatus }}
+            {...{
+              messages,
+              isLoading,
+              currentUserId,
+              incomingAIWord,
+              AIStatus,
+            }}
           />
         </CardContent>
         <Divider />
@@ -132,6 +137,7 @@ function ConversationDetailsPage({
             <Textarea
               placeholder="Type your message here."
               className="min-h-9 max-h-44 responsive-text"
+              autoFocus
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);

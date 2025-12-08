@@ -21,6 +21,7 @@ import { ConversationType } from "@/types/ConversationType";
 import { clientApiFetch } from "@/utils/clientApiFetch";
 import { useQuery } from "@tanstack/react-query";
 import { MessageSquareText } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 function ConversationsSheetContent() {
@@ -61,25 +62,29 @@ function ConversationsSheetContent() {
       {Array.isArray(conversations) &&
         conversations.length > 0 &&
         conversations.map((conversation) => (
-          <Item
-            className={`border-1 shadow-md cursor-pointer transition-transform hover:translate-x-2
-                 active:translate-x-1 ease-in-out`}
+          <Link
+            href={`/conversations/${conversation.id}`}
             key={conversation.id}
           >
-            <ItemContent>
-              <ItemTitle className="responsive-text">
-                {conversation.title}
-              </ItemTitle>
-              {conversation.projectId && (
-                <ItemDescription className="responsive-text">
-                  In{" "}
-                  <span className="font-bold">
-                    {conversation.project?.title}
-                  </span>
-                </ItemDescription>
-              )}
-            </ItemContent>
-          </Item>
+            <Item
+              className={`border-1 shadow-md cursor-pointer transition-transform hover:translate-x-2
+                 active:translate-x-1 ease-in-out`}
+            >
+              <ItemContent>
+                <ItemTitle className="responsive-text">
+                  {conversation.title}
+                </ItemTitle>
+                {conversation.projectId && (
+                  <ItemDescription className="responsive-text">
+                    In{" "}
+                    <span className="font-bold">
+                      {conversation.project?.title}
+                    </span>
+                  </ItemDescription>
+                )}
+              </ItemContent>
+            </Item>
+          </Link>
         ))}
     </>
   );

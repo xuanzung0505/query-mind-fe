@@ -13,6 +13,7 @@ import { ConversationType } from "@/types/ConversationType";
 import { clientApiFetch } from "@/utils/clientApiFetch";
 import dayjs from "@/utils/dayjs";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 function ConversationsClientList() {
   const { isLoading, data: conversations } = useQuery({
@@ -55,31 +56,32 @@ function ConversationsClientList() {
       {Array.isArray(conversations) &&
         conversations.length > 0 &&
         conversations.map((conversation) => (
-          <Item
-            className={`border-1 shadow-md cursor-pointer transition-transform hover:translate-x-2
+          <Link href={`conversations/${conversation.id}`} key={conversation.id}>
+            <Item
+              className={`border-1 shadow-md cursor-pointer transition-transform hover:translate-x-2
                  active:translate-x-1 ease-in-out`}
-            key={conversation.id}
-          >
-            <ItemContent>
-              <ItemTitle className="responsive-text">
-                {conversation.title}
-              </ItemTitle>
-              <ItemDescription className="text-neutral-500 responsive-text">
-                {conversation.lastMessage}
-              </ItemDescription>
-              {conversation.projectId && (
-                <ItemDescription className="responsive-text">
-                  In{" "}
-                  <span className="font-bold">
-                    {conversation.project?.title}
-                  </span>
+            >
+              <ItemContent>
+                <ItemTitle className="responsive-text">
+                  {conversation.title}
+                </ItemTitle>
+                <ItemDescription className="text-neutral-500 responsive-text">
+                  {conversation.lastMessage}
                 </ItemDescription>
-              )}
-            </ItemContent>
-            <ItemActions className="text-neutral-500 responsive-text">
-              {dayjs(conversation.lastMessageCreatedAt).fromNow()}
-            </ItemActions>
-          </Item>
+                {conversation.projectId && (
+                  <ItemDescription className="responsive-text">
+                    In{" "}
+                    <span className="font-bold">
+                      {conversation.project?.title}
+                    </span>
+                  </ItemDescription>
+                )}
+              </ItemContent>
+              <ItemActions className="text-neutral-500 responsive-text">
+                {dayjs(conversation.lastMessageCreatedAt).fromNow()}
+              </ItemActions>
+            </Item>
+          </Link>
         ))}
     </>
   );

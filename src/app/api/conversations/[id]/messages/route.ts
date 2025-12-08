@@ -4,10 +4,14 @@ import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
 import { getMessages } from "@/db/messages";
 
-export async function GET(request: Request) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await customMiddleware(request);
-    const messages = await getMessages();
+    const { id: conversationId } = await params;
+    const messages = await getMessages({ conversationId });
     return new Response(JSON.stringify(messages), {
       status: StatusCodeEnum.OK,
       headers: { "Content-Type": "application/json" },

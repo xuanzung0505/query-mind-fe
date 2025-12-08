@@ -42,7 +42,14 @@ export async function POST(request: Request) {
             ].includes(event.type)
           )
             controller.enqueue(`data: ${JSON.stringify(event)}\n\n`);
-          if (event.type === "response.completed") controller.close();
+          // save message
+          if (event.type === "response.output_text.done") {
+            
+          }
+          // close the connection
+          if (event.type === "response.completed") {
+            controller.close();
+          }
         }
       },
     });
