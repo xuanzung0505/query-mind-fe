@@ -1,7 +1,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { MessageType } from "@/types/MessageType";
 import dayjs from "@/utils/dayjs";
+import { StreamStatus } from "@/utils/fetchSseStream";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -14,11 +16,13 @@ function MessagesClientList({
   messages,
   currentUserId,
   incomingAIWord,
+  AIStatus,
 }: {
   isLoading: boolean;
   messages: MessageType[];
   currentUserId: string;
   incomingAIWord: string;
+  AIStatus: string;
 }) {
   if (isLoading)
     return (
@@ -47,30 +51,61 @@ function MessagesClientList({
     <>
       {Array.isArray(messages) && (
         <>
-          {incomingAIWord != "" && (
-            <Collapsible
-              className={`flex flex-col-reverse gap-2`}
-              key={`incoming-ai`}
-            >
-              <div className={"self-start"}>
-                <CollapsibleTrigger>
-                  <div
-                    className={cn(
-                      "bg-neutral-200 rounded-xl p-4 float-left",
-                      "text-left sm:max-w-[500px]"
-                    )}
-                  >
-                    {incomingAIWord}
+          {AIStatus == StreamStatus.LOADING && (
+            <>
+              {incomingAIWord == "" ? (
+                <Collapsible
+                  className={`flex flex-col-reverse gap-2`}
+                  key={`loading`}
+                >
+                  <div className={"self-start"}>
+                    <CollapsibleTrigger>
+                      <div
+                        className={cn(
+                          "rounded-xl p-4 float-left",
+                          "text-left sm:max-w-[500px] text-primary-bg inline-flex gap-2 items-center"
+                        )}
+                      >
+                        <span>
+                          <Spinner className="size-6" />
+                        </span>
+                        <span>Thinking...</span>
+                      </div>
+                    </CollapsibleTrigger>
                   </div>
-                </CollapsibleTrigger>
-              </div>
-              <CollapsibleContent
-                className="self-center transition-all duration-500 data-[state=open]:animate-in 
+                  <CollapsibleContent
+                    className="self-center transition-all duration-500 data-[state=open]:animate-in 
                 data-[state=open]:fade-in-0"
-              >
-                {dayjs(Date()).calendar()}
-              </CollapsibleContent>
-            </Collapsible>
+                  >
+                    {dayjs(Date()).calendar()}
+                  </CollapsibleContent>
+                </Collapsible>
+              ) : (
+                <Collapsible
+                  className={`flex flex-col-reverse gap-2`}
+                  key={`incoming-ai`}
+                >
+                  <div className={"self-start"}>
+                    <CollapsibleTrigger>
+                      <div
+                        className={cn(
+                          "bg-neutral-200 rounded-xl p-4 float-left",
+                          "text-left sm:max-w-[500px]"
+                        )}
+                      >
+                        {incomingAIWord}
+                      </div>
+                    </CollapsibleTrigger>
+                  </div>
+                  <CollapsibleContent
+                    className="self-center transition-all duration-500 data-[state=open]:animate-in 
+                data-[state=open]:fade-in-0"
+                  >
+                    {dayjs(Date()).calendar()}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+            </>
           )}
           {messages.map(({ id, text, createdById, createdAt }, index) => (
             <Collapsible

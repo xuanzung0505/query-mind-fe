@@ -105,6 +105,7 @@ function ConversationDetailsPage({
     }
   }, [AIStatus, setIncomingAIWord, incomingAIWord, conversationId, messages]);
 
+
   return (
     <div className="conversation-details-page p-2">
       <Card
@@ -122,7 +123,7 @@ function ConversationDetailsPage({
         <Divider />
         <CardContent className="p-2 md:p-4 flex-1 overflow-y-scroll responsive-text flex justify-start flex-col-reverse gap-2 cursor-default">
           <MessagesClientList
-            {...{ messages, isLoading, currentUserId, incomingAIWord }}
+            {...{ messages, isLoading, currentUserId, incomingAIWord, AIStatus }}
           />
         </CardContent>
         <Divider />
