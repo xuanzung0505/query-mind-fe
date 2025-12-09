@@ -86,6 +86,7 @@ function ConversationDetailsPage({
   }, [isFetched, queriedMessages]);
 
   const handleSendMessage = () => {
+    if (isLoading || isConversationLoading) return;
     setMessages([
       {
         id: crypto.randomUUID(),
