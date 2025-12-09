@@ -20,6 +20,7 @@ const BrandButtonNavBar = (props: {
 
 function NavBar() {
   const pathname = usePathname();
+  const parentDir = pathname.split("/")[1];
   const activeButtonClass = "opacity-100";
   const menuList = [
     { title: "Conversations", url: "/conversations" },
@@ -37,7 +38,9 @@ function NavBar() {
           <Link href={menu.url} key={index}>
             <button
               className={`p-1 sm:p-2 cursor-pointer opacity-80 hover:opacity-100 active:opacity-100 active:underline ${
-                pathname === menu.url ? activeButtonClass : ""
+                parentDir !== "" && menu.url.endsWith(parentDir)
+                  ? activeButtonClass
+                  : ""
               }`}
             >
               {menu.title}

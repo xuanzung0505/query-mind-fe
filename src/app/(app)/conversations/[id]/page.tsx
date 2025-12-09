@@ -170,6 +170,7 @@ function ConversationDetailsPage({
               placeholder="Type your message here."
               className="min-h-9 max-h-44 responsive-text"
               autoFocus
+              maxLength={1000}
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
