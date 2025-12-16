@@ -4,7 +4,7 @@ import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
 import OpenAI from "openai";
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_SECRET });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(request: Request) {
   try {

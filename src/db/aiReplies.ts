@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-const client = new OpenAI({ apiKey: process.env.OPENAI_SECRET });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // The AI response is sent in a single HTTP response
 const queryAIReply = async () => {
