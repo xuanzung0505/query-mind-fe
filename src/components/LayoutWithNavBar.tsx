@@ -12,12 +12,12 @@ function LayoutWithNavBar({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { open } = useSidebar();
+  const { open, isMobile } = useSidebar();
   return (
     <div
       className="bg-neutral-100"
       style={{
-        width: open ? `calc(100vw - ${SIDEBAR_WIDTH})` : "100vw",
+        width: !isMobile && open ? `calc(100vw - ${SIDEBAR_WIDTH})` : "100vw",
       }}
     >
       <NavBar />

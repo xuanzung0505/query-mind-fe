@@ -54,6 +54,7 @@ function useSidebar() {
 }
 
 function SidebarProvider({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
@@ -71,7 +72,7 @@ function SidebarProvider({
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
-  const [_open, _setOpen] = React.useState(defaultOpen);
+  const [_open, _setOpen] = React.useState(isMobile ? false : true);
   const open = openProp ?? _open;
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {

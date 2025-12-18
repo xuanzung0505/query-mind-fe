@@ -22,6 +22,7 @@ import useRetrieveAIReply from "./useRetrieveAIReply";
 import OpenAI from "openai";
 import { ConversationType } from "@/types/ConversationType";
 import { Skeleton } from "@/components/ui/skeleton";
+import getIsTouchDevice from "@/utils/getIsTouchDevice";
 
 const currentUserId = "d68f";
 
@@ -176,13 +177,8 @@ function ConversationDetailsPage({
                 setMessage(e.target.value);
               }}
               onKeyDown={(e) => {
-                // Detect touch/mobile devices — don't submit on Enter there.
-                const isTouchDevice =
-                  typeof window !== "undefined" &&
-                  ("ontouchstart" in window || navigator.maxTouchPoints > 0);
-
                 if (e.key === "Enter" && !e.shiftKey) {
-                  if (isTouchDevice || message.trim() == "") {
+                  if (getIsTouchDevice() || message.trim() == "") {
                     // allow newline on mobile keyboards
                     return;
                   }
