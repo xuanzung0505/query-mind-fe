@@ -1,16 +1,25 @@
+"use client";
+
 import React from "react";
 import NavBar from "./NavBar";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "./ui/button";
+import { SIDEBAR_WIDTH, useSidebar } from "./ui/sidebar";
 
 function LayoutWithNavBar({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { open } = useSidebar();
   return (
-    <div className="bg-neutral-100">
+    <div
+      className="bg-neutral-100"
+      style={{
+        width: open ? `calc(100vw - ${SIDEBAR_WIDTH})` : "100vw",
+      }}
+    >
       <NavBar />
       {children}
 

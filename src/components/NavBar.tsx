@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React from "react";
@@ -5,6 +6,9 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Brand from "./Brand";
 import { cn } from "@/lib/utils";
+import { SidebarTrigger } from "./ui/sidebar";
+import Image from "next/image";
+import { Avatar } from "./ui/avatar";
 
 const BrandButtonNavBar = (props: {
   className: string;
@@ -29,11 +33,27 @@ function NavBar() {
 
   return (
     <div
-      className={`bg-[#0076D2FF] p-2 md:px-4 flex text-white items-center justify-between lg:grid lg:grid-cols-3 
+      className={`bg-[#0076D2FF] p-2 md:px-4 text-white items-center grid grid-cols-3
         sticky top-0 z-[1]`}
     >
-      <BrandButtonNavBar {...{ pathname, className: "" }} />
-      <div className="flex text-sm sm:text-base sm:gap-2 md:gap-4 justify-center lg:gap-6">
+      <SidebarTrigger
+        className="md:size-10 border-1 opacity-60 hover:opacity-100 cursor-pointer 
+        active:opacity-100"
+      />
+      <BrandButtonNavBar {...{ pathname, className: "flex justify-center" }} />
+      <div className="flex justify-end">
+        <Avatar className="rounded-full">
+          <Image
+            src={
+              "https://lh3.googleusercontent.com/a/ACg8ocIMhnvazXFsi7p-5zN2qeTgn_m-q5RCRViXduFn2fohYDY-fD_B=s96-c"
+            }
+            alt="creator-avatar"
+            width={200}
+            height={200}
+          />
+        </Avatar>
+      </div>
+      {/* <div className="flex text-sm sm:text-base sm:gap-2 md:gap-4 justify-center lg:gap-6">
         {menuList.map((menu, index) => (
           <Link href={menu.url} key={index}>
             <button
@@ -47,7 +67,7 @@ function NavBar() {
             </button>
           </Link>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

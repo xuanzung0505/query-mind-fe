@@ -16,7 +16,7 @@ export default function ConversationsPage() {
           </span>
           <PrimaryButton additionalClassName="flex items-center gap-2">
             <Plus />
-            <span className="hidden xs:block">New Conversation</span>
+            <span className="hidden md:block">New Conversation</span>
           </PrimaryButton>
         </div>
         <div className="flex w-full mt-8 flex-col gap-6">
