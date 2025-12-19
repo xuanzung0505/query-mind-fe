@@ -1,5 +1,6 @@
 "use client";
 
+import { ConversationsSheetContent } from "@/app/(app)/conversations/[id]/ConversationsSheet";
 import {
   Sidebar,
   SidebarContent,
@@ -58,6 +59,14 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Recent conversations</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <div className="flex flex-col gap-2">
+              <ConversationsSheetContent></ConversationsSheetContent>
+            </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

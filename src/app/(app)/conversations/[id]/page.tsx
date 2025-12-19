@@ -12,7 +12,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
 import { use, useEffect, useState } from "react";
-import ConversationsSheet from "./ConversationsSheet";
 import MessagesClientList from "./MessagesClientList";
 import { useQuery } from "@tanstack/react-query";
 import { MessageType } from "@/types/MessageType";
@@ -142,7 +141,6 @@ function ConversationDetailsPage({
       >
         <CardHeader className="p-0 gap-0">
           <CardTitle className="h-[32px] flex items-center px-2 py-6 gap-2">
-            <ConversationsSheet></ConversationsSheet>
             <span className="flex-9 line-clamp-2">
               {isConversationLoading ? (
                 <Skeleton className="h-4 w-[200px]" />

@@ -24,7 +24,7 @@ import { MessageSquareText } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-function ConversationsSheetContent() {
+export function ConversationsSheetContent() {
   const { isLoading, data: conversations } = useQuery({
     queryKey: ["conversations"],
     queryFn: () =>
@@ -44,7 +44,7 @@ function ConversationsSheetContent() {
           .map((_, index) => (
             <Skeleton
               key={index}
-              className="h-20 shrink-0 sm:h-[70px]"
+              className="h-12 shrink-0 sm:h-[70px]"
             ></Skeleton>
           ))}
       </>
@@ -90,6 +90,10 @@ function ConversationsSheetContent() {
   );
 }
 
+/**
+ * 
+ * The default sheet to view a list of recent conversations -> integrate into sidebar
+ */
 function ConversationsSheet() {
   return (
     <Sheet>
