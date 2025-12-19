@@ -23,7 +23,12 @@ function LayoutWithNavBar({
       <NavBar />
       {children}
 
-      <footer className="flex gap-4 justify-between p-2 xs:px-12 md:px-32 w-screen text-sm sm:text-base md:text-xl mt-6 m-auto bg-white">
+      <footer
+        className="flex gap-4 justify-between p-2 xs:px-12 md:px-32 w-screen text-sm sm:text-base md:text-xl mt-6 m-auto bg-white"
+        style={{
+          width: !isMobile && open ? `calc(100vw - ${SIDEBAR_WIDTH})` : "100vw",
+        }}
+      >
         <div className="flex gap-2">
           <Link href={"/about"}>
             <Button variant={"link"} className="cursor-pointer">
