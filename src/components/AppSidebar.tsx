@@ -36,7 +36,7 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar className="h-full">
+    <Sidebar side="left">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigate</SidebarGroupLabel>

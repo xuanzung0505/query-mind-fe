@@ -68,7 +68,7 @@ export function ConversationsSheetContent() {
           >
             <Item
               className={`border-1 shadow-md cursor-pointer transition-transform hover:translate-x-2
-                 active:translate-x-1 ease-in-out`}
+                 active:translate-x-1 ease-in-out max-w-[280px]`}
             >
               <ItemContent>
                 <ItemTitle className="responsive-text">
@@ -91,7 +91,7 @@ export function ConversationsSheetContent() {
 }
 
 /**
- * 
+ *
  * The default sheet to view a list of recent conversations -> integrate into sidebar
  */
 function ConversationsSheet() {
