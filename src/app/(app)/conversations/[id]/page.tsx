@@ -166,7 +166,7 @@ function ConversationDetailsPage({
         <CardFooter className="flex flex-col items-start p-4">
           <div className="w-full flex gap-2">
             <Textarea
-              placeholder="Type your message here."
+              placeholder="Ask QueryMind Bot"
               className="min-h-9 max-h-44 responsive-text"
               autoFocus
               maxLength={1000}
