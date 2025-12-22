@@ -8,7 +8,7 @@ function PrimaryButton({
   additionalClassName,
   ...props
 }: React.ComponentProps<"button"> & {
-  children: React.JSX.Element | string | (React.JSX.Element | string)[];
+  children: React.ReactNode;
   size?: "default" | "sm" | "icon" | "lg";
   additionalClassName?: string;
 }) {

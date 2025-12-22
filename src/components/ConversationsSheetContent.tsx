@@ -1,30 +1,17 @@
 "use client";
 
-import PrimaryButton from "@/components/PrimaryButton";
-import {
-  Item,
-  ItemContent,
-  ItemTitle,
-  ItemDescription,
-} from "@/components/ui/item";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ConversationType } from "@/types/ConversationType";
 import { clientApiFetch } from "@/utils/clientApiFetch";
 import { useQuery } from "@tanstack/react-query";
-import { MessageSquareText } from "lucide-react";
+import { Item, ItemContent, ItemTitle, ItemDescription } from "./ui/item";
+import { Skeleton } from "./ui/skeleton";
 import Link from "next/link";
-import React from "react";
 
-export function ConversationsSheetContent() {
+/**
+ *
+ * Default sheet content which loads recent conversations
+ */
+function ConversationsSheetContent() {
   const { isLoading, data: conversations } = useQuery({
     queryKey: ["conversations"],
     queryFn: () =>
@@ -65,10 +52,11 @@ export function ConversationsSheetContent() {
           <Link
             href={`/conversations/${conversation.id}`}
             key={conversation.id}
+            className="max-w-[280px]"
           >
             <Item
-              className={`border-1 shadow-md cursor-pointer transition-transform hover:translate-x-2
-                 active:translate-x-1 ease-in-out max-w-[280px]`}
+              className={`border-1 cursor-pointer transition-transform hover:bg-neutral-100
+                 active:bg-neutral-200 ease-in-out`}
             >
               <ItemContent>
                 <ItemTitle className="responsive-text">
@@ -89,34 +77,4 @@ export function ConversationsSheetContent() {
     </>
   );
 }
-
-/**
- *
- * The default sheet to view a list of recent conversations -> integrate into sidebar
- */
-function ConversationsSheet() {
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <PrimaryButton size="icon" additionalClassName="p-0!">
-          <MessageSquareText />
-        </PrimaryButton>
-      </SheetTrigger>
-      <SheetContent side={"left"} className="bg-white border-0">
-        <SheetHeader>
-          <SheetTitle>Recent conversations</SheetTitle>
-        </SheetHeader>
-        <div className="flex flex-col py-2 px-4 gap-2 overflow-y-scroll">
-          <ConversationsSheetContent />
-        </div>
-        <SheetFooter>
-          <SheetClose asChild>
-            <PrimaryButton>Close</PrimaryButton>
-          </SheetClose>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
-  );
-}
-
-export default ConversationsSheet;
+export default ConversationsSheetContent;

@@ -1,20 +1,24 @@
 "use client";
 
-import { ConversationsSheetContent } from "@/app/(app)/conversations/[id]/ConversationsSheet";
+import ConversationsSheetContent from "./ConversationsSheetContent";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Home, MessageCircle, Folder } from "lucide-react";
 import { usePathname } from "next/navigation";
+import PrimaryButton from "./PrimaryButton";
 
 export function AppSidebar() {
+  const { isMobile, setOpen, setOpenMobile } = useSidebar();
   const pathname = usePathname();
   const parentDir = pathname.split("/")[1];
   const items = [
@@ -37,7 +41,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar side="left">
-      <SidebarContent>
+      <SidebarContent className="bg-white">
         <SidebarGroup>
           <SidebarGroupLabel>Navigate</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -65,11 +69,21 @@ export function AppSidebar() {
           <SidebarGroupLabel>Recent conversations</SidebarGroupLabel>
           <SidebarGroupContent>
             <div className="flex flex-col gap-2">
-              <ConversationsSheetContent></ConversationsSheetContent>
+              <ConversationsSheetContent />
             </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <PrimaryButton
+          onClick={() => {
+            if (isMobile) setOpenMobile(false);
+            else setOpen(false);
+          }}
+        >
+          close
+        </PrimaryButton>
+      </SidebarFooter>
     </Sidebar>
   );
 }
