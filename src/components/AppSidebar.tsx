@@ -16,6 +16,8 @@ import {
 import { Home, MessageCircle, Folder } from "lucide-react";
 import { usePathname } from "next/navigation";
 import PrimaryButton from "./PrimaryButton";
+import Link from "next/link";
+import { useEffect } from "react";
 
 export function AppSidebar() {
   const { isMobile, setOpen, setOpenMobile } = useSidebar();
@@ -39,6 +41,12 @@ export function AppSidebar() {
     },
   ];
 
+  // close app sidebar if pathname is changed
+  useEffect(() => {
+    if (isMobile) setOpenMobile(false);
+    else setOpen(false);
+  }, [pathname]);
+
   return (
     <Sidebar side="left">
       <SidebarContent className="bg-white">
@@ -55,10 +63,10 @@ export function AppSidebar() {
                       (parentDir !== "" && item.url.endsWith(parentDir))
                     }
                   >
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

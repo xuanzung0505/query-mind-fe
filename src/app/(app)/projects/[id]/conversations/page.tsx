@@ -135,10 +135,10 @@ function ProjectDetailsConversationsPage() {
                 />
               </ConversationsSheet>
               <span className="flex-9 line-clamp-2">
-                {isProjectLoading ? (
+                {conversation === undefined ? (
                   <Skeleton className="h-4 w-[200px]" />
                 ) : (
-                  <>{conversation?.title}</>
+                  <>{conversation.title}</>
                 )}
               </span>
             </CardTitle>
@@ -222,7 +222,7 @@ function ProjectDetailsConversationsPage() {
           <CardHeader className="p-2 gap-0">
             <CardTitle className="h-[32px] flex items-center px-2 py-6 gap-2">
               <span className="flex-9 line-clamp-2">
-                {isProjectLoading ? (
+                {conversation === undefined ? (
                   <Skeleton className="h-4 w-[200px]" />
                 ) : (
                   <>{conversation?.title}</>
