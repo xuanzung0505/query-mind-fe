@@ -28,7 +28,7 @@ export default async function HomePage() {
           alt="AI chat background"
           width={500}
           height={500}
-          className="rounded-2xl"
+          className="w-auto h-auto rounded-2xl"
         ></Image>
         <h1
           className={`text-[20px] sm:text-[30px] font-extrabold tracking-tight bg-clip-text mt-4`}
