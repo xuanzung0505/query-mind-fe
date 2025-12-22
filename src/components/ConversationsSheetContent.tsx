@@ -52,7 +52,6 @@ function ConversationsSheetContent() {
           <Link
             href={`/conversations/${conversation.id}`}
             key={conversation.id}
-            className="max-w-[280px]"
           >
             <Item
               className={`border-1 cursor-pointer transition-transform hover:bg-neutral-100
