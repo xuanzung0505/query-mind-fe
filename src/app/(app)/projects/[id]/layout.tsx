@@ -15,7 +15,7 @@ function useProjectDetails({ projectId }: { projectId: string }) {
     isFetched,
     data: project,
   } = useQuery({
-    queryKey: [`projects/${projectId}`],
+    queryKey: ["projects", projectId],
     queryFn: () =>
       clientApiFetch<ProjectType>(
         `${process.env.NEXT_PUBLIC_HOST_URL}/api/projects/${projectId}`,

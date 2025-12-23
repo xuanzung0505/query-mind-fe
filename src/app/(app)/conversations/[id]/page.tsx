@@ -35,7 +35,7 @@ function useConversationDetails({
     isFetched,
     data: conversation,
   } = useQuery({
-    queryKey: [`conversations/${conversationId}`],
+    queryKey: ["conversations", conversationId],
     queryFn: () =>
       clientApiFetch<ConversationType>(
         `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversationId}`,
@@ -63,7 +63,7 @@ function ConversationDetailsPage({
     isFetched,
     data: queriedMessages,
   } = useQuery({
-    queryKey: [`conversations/${conversationId}/messages`],
+    queryKey: ["conversations", conversationId, "messages"],
     queryFn: () =>
       clientApiFetch<MessageType[]>(
         `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversationId}/messages`,

@@ -44,7 +44,7 @@ function ProjectDetailsConversationsPage() {
     isFetched,
     data: queriedMessages,
   } = useQuery({
-    queryKey: [`conversations/${conversation?.id}/messages`],
+    queryKey: ["conversations", conversation?.id, "messages"],
     queryFn: () =>
       clientApiFetch<MessageType[]>(
         `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversation?.id}/messages`,
