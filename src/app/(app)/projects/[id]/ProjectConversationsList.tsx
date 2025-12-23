@@ -38,6 +38,7 @@ function ProjectConversationsList({
           method: "GET",
         }
       ),
+    staleTime: 30 * 1000,
     enabled: projectId !== undefined,
   });
 
@@ -84,7 +85,9 @@ function ProjectConversationsList({
             <ItemContent>
               <ItemTitle className="responsive-text">{convo.title}</ItemTitle>
               <ItemDescription className="responsive-text text-wrap">
-                <span className="text-neutral-500">{dayjs(convo.lastMessageCreatedAt).calendar()}</span>
+                <span className="text-neutral-500">
+                  {dayjs(convo.lastMessageCreatedAt).calendar()}
+                </span>
               </ItemDescription>
             </ItemContent>
           </Item>

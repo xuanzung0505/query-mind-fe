@@ -43,6 +43,7 @@ function useConversationDetails({
           method: "GET",
         }
       ),
+    staleTime: 60 * 1000,
   });
 
   return { isLoading, isFetched, conversation };

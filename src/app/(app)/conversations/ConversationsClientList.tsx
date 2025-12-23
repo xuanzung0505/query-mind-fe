@@ -25,6 +25,7 @@ function ConversationsClientList() {
           method: "GET",
         }
       ),
+    staleTime: 30 * 1000,
   });
 
   if (isLoading)

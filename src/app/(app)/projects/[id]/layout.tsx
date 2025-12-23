@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { ProjectContext } from "@/contexts/ProjectContext";
 import { cn } from "@/lib/utils";
 import { ProjectType } from "@/types/ProjectType";
@@ -23,6 +24,7 @@ function useProjectDetails({ projectId }: { projectId: string }) {
           method: "GET",
         }
       ),
+    staleTime: 30 * 1000,
   });
 
   return { isLoading, isFetched, project };
@@ -59,9 +61,13 @@ export default function RootLayout({
   return (
     <div className="project-details-page p-2">
       <div className="mt-4 mx-2">
-        <h1 className="text-[20px] sm:text-[30px] font-extrabold tracking-tight">
+        <h1 className="text-[20px] sm:text-[30px] font-extrabold tracking-tight flex gap-2 items-center">
           You are viewing:{" "}
-          <span className="text-primary-bg">{project?.title}</span>
+          {project !== undefined ? (
+            <span className="text-primary-bg">{project?.title}</span>
+          ) : (
+            <Skeleton className="w-80 h-8 inline-block"></Skeleton>
+          )}
         </h1>
       </div>
       <div className="mt-4 flex justify-center">
