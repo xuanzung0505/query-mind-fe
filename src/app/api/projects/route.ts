@@ -18,6 +18,7 @@ export async function GET(request: Request) {
         status: StatusCodeEnum.UNAUTHORIZED,
         headers: { "Content-Type": "application/json" },
       });
+    else console.log(error);
   }
 
   return new Response(JSON.stringify([]), {

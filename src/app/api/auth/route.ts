@@ -40,7 +40,7 @@ export async function POST(request: Request) {
           status: StatusCodeEnum.UNAUTHORIZED,
         }
       );
-    console.error(error);
+    else console.error(error);
     return new Response(JSON.stringify({ message: "Server error." }), {
       status: StatusCodeEnum.INTERNAL_SERVER_ERROR,
     });
