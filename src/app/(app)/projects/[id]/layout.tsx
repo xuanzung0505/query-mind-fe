@@ -72,7 +72,7 @@ export default function RootLayout({
       </div>
       <div className="mt-4 flex justify-center">
         <Tabs value={currentTab}>
-          <TabsList className="bg-white p-2 rounded">
+          <TabsList className="bg-white p-2 rounded-xl shadow-md">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab}
@@ -80,7 +80,7 @@ export default function RootLayout({
                 className={cn(
                   `px-3 data-[state=inactive]:text-neutral-500 data-[state=active]:font-bold`,
                   `data-[state=active]:bg-primary-bg data-[state=active]:text-white cursor-pointer`,
-                  `rounded`
+                  `rounded data-[state=inactive]:hover:opacity-70`
                 )}
                 onClick={() => {
                   router.push(`/projects/${projectId}/${tab}`);
