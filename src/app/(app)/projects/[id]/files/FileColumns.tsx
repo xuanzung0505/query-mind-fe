@@ -6,6 +6,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { FileStatusEnum } from "@/const/FileStatusEnum";
 import { FileType } from "@/types/FileType";
 import dayjs from "@/utils/dayjs";
+import formatBytes from "@/utils/formatBytes";
 import { ColumnDef } from "@tanstack/react-table";
 import { Trash } from "lucide-react";
 import Link from "next/link";
@@ -22,7 +23,13 @@ export const FileColumns: ColumnDef<FileType>[] = [
       const { original } = row;
       return (
         <div>
-          <Link href={original.fileUrl} target="_blank" className="text-primary-bg underline">{original.fileUrl}</Link>
+          <Link
+            href={original.fileUrl}
+            target="_blank"
+            className="text-primary-bg underline"
+          >
+            {original.fileUrl}
+          </Link>
         </div>
       );
     },
@@ -34,6 +41,9 @@ export const FileColumns: ColumnDef<FileType>[] = [
   {
     accessorKey: "size",
     header: () => <div className="text-center text-neutral-600">Size</div>,
+    cell: ({ row }) => {
+      return <>{formatBytes(row.original.size)}</>;
+    },
   },
   {
     accessorKey: "status",
