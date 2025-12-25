@@ -1,3 +1,4 @@
+import { Toaster } from "sonner";
 import ReactQueryProviderClient from "../components/ReactQueryProviderClient";
 import "./globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -14,7 +15,10 @@ export default function RootLayout({
         <GoogleOAuthProvider
           clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}
         >
-          <body>{children}</body>
+          <body>
+            {children}
+            <Toaster />
+          </body>
         </GoogleOAuthProvider>
       </ReactQueryProviderClient>
     </html>
