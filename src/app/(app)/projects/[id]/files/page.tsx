@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useRef } from "react";
 import type { ListBlobResultBlob } from "@vercel/blob";
 import { clientApiFetch } from "@/utils/clientApiFetch";
 import { FileDataTable } from "./FileDataTable";
@@ -14,14 +14,18 @@ import { toast } from "sonner";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; //5MB
 
-function ProjectDetailsFilesPage() {
+function ProjectDetailsFilesPage({
+  params,
+}: Readonly<{
+  params: Promise<{ id: string }>;
+}>) {
+  const { id: projectId } = use(params);
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const [files, setFiles] = useState<FileType[]>([]);
   const queryClient = useQueryClient();
-  const { isLoading: isBlobsLoading, data: blobs } = useQuery({
+  const { isLoading: isBlobsLoading, data: files } = useQuery({
     queryKey: ["blobs"],
     queryFn: () =>
-      clientApiFetch<ListBlobResultBlob[]>(
+      clientApiFetch<FileType[]>(
         `${process.env.NEXT_PUBLIC_HOST_URL}/api/blobs`,
         {
           method: "GET",
@@ -31,7 +35,7 @@ function ProjectDetailsFilesPage() {
   const uploadMutation = useMutation({
     mutationFn: (file: File) =>
       clientApiFetch<ListBlobResultBlob[]>(
-        `${process.env.NEXT_PUBLIC_HOST_URL}/api/blobs?filename=${file.name}`,
+        `${process.env.NEXT_PUBLIC_HOST_URL}/api/blobs?filename=${file.name}&projectId=${projectId}`,
         {
           method: "POST",
           body: file,
@@ -42,26 +46,6 @@ function ProjectDetailsFilesPage() {
       toast.success("File has been uploaded successfully");
     },
   });
-
-  // set blobs into table
-  useEffect(() => {
-    if (!isBlobsLoading && Array.isArray(blobs)) {
-      setFiles(
-        blobs.map(
-          (blob) =>
-            ({
-              id: "file",
-              mimeType: ".pdf",
-              size: blob.size,
-              status: "Uploaded",
-              createdById: "d68f",
-              fileUrl: blob.url,
-              createdAt: blob.uploadedAt,
-            } as FileType)
-        )
-      );
-    }
-  }, [isBlobsLoading, blobs]);
 
   return (
     <div className="mt-4 flex flex-col gap-2 mx-2 bg-white rounded-xl p-4 shadow-md">
@@ -94,7 +78,7 @@ function ProjectDetailsFilesPage() {
           {uploadMutation.isPending ? "Uploading..." : "Upload"}
         </PrimaryButton>
       </form>
-      {isBlobsLoading && !Array.isArray(blobs) ? (
+      {isBlobsLoading || !Array.isArray(files) ? (
         <div className="container mx-auto">
           <Skeleton className="w-full h-60" />
         </div>

@@ -2,14 +2,17 @@ import { FileStatusEnum } from "@/const/FileStatusEnum";
 import { UserType } from "./UserType";
 
 export type FileType = {
-  id: string;
-  mimeType: string;
+  _id: string;
+  contentType: string;
   size: number;
   status: string | FileStatusEnum;
   // projectId: string; -> 1 file can belong to multiple projects
   createdById: string;
   createdBy?: Pick<UserType, "id">;
-  fileUrl: string;
+  projectId: string;
+  url: string;
+  downloadUrl: string;
+  pathname: string;
   createdAt: Date;
   updatedAt: Date;
 };

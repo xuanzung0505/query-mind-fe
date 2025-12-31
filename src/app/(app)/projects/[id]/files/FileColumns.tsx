@@ -13,7 +13,7 @@ import Link from "next/link";
 
 export const FileColumns: ColumnDef<FileType>[] = [
   {
-    accessorKey: "id",
+    accessorKey: "_id",
     header: () => <div className="text-left text-neutral-600">ID</div>,
   },
   {
@@ -24,19 +24,21 @@ export const FileColumns: ColumnDef<FileType>[] = [
       return (
         <div>
           <Link
-            href={original.fileUrl}
+            href={original.url}
             target="_blank"
             className="text-primary-bg underline"
           >
-            {original.fileUrl}
+            {original.url}
           </Link>
         </div>
       );
     },
   },
   {
-    accessorKey: "mimeType",
-    header: () => <div className="text-center text-neutral-600">Mime type</div>,
+    accessorKey: "contentType",
+    header: () => (
+      <div className="text-center text-neutral-600">contentType</div>
+    ),
   },
   {
     accessorKey: "size",

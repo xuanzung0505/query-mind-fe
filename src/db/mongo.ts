@@ -1,4 +1,4 @@
-import { Binary, MongoClient } from "mongodb";
+import { Binary, Collection, MongoClient } from "mongodb";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import path from "path";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
@@ -9,6 +9,8 @@ import fs from "fs";
 
 const dbName = "test_database";
 const collectionName = "chunked_data";
+const chunkedFiles_collection = "chunkedFiles";
+const files_collection = "files";
 
 const embeddingSize = 512;
 
@@ -52,7 +54,13 @@ export async function convertEmbeddingsToBSON(float32_embeddings: number[][]) {
   }
 }
 
-export async function checkCollectionToCreate(connectedClient?: MongoClient) {
+export async function checkCollectionToCreate({
+  connectedClient,
+  dbName,
+}: {
+  connectedClient?: MongoClient;
+  dbName: string;
+}) {
   try {
     let client = connectedClient;
     if (connectedClient === undefined) {
@@ -76,7 +84,13 @@ export async function checkCollectionToCreate(connectedClient?: MongoClient) {
   }
 }
 
-export async function createIndex(connectedClient?: MongoClient) {
+export async function createIndex({
+  connectedClient,
+  collectionName,
+}: {
+  connectedClient?: MongoClient;
+  collectionName: string;
+}) {
   try {
     let client = connectedClient;
     if (connectedClient === undefined) {
@@ -174,8 +188,11 @@ async function testMongo() {
     console.log(
       "Creating collection and index, generating embeddings and inserting documents..."
     );
-    await checkCollectionToCreate(client);
-    await createIndex(client);
+    await checkCollectionToCreate({ connectedClient: client, dbName });
+    await createIndex({
+      connectedClient: client,
+      collectionName: collectionName,
+    });
 
     // Insert documents with embeddings into collection
     const insertDocuments: any[] = [];
@@ -260,6 +277,40 @@ async function testMongo() {
   } catch (error) {
     console.log((error as Error).stack);
     console.log("mongo error:" + error);
+  }
+}
+
+export class FileService {
+  private connectedClient: MongoClient;
+  private dbName: string = dbName;
+  private collectionName: string = files_collection;
+  private collection: Collection;
+
+  constructor({ connectedClient }: { connectedClient: MongoClient }) {
+    this.connectedClient = connectedClient;
+
+    this.collection = this.connectedClient
+      .db(this.dbName)
+      .collection(this.collectionName);
+  }
+
+  public async insert({
+    filter,
+    operator,
+  }: {
+    filter: Record<string, any>;
+    operator: Record<string, any>;
+  }) {
+    await this.collection.findOneAndUpdate(filter, operator, { upsert: true });
+  }
+
+  public async get() {
+    const cursor = this.collection.find();
+    const result = [];
+    while (await cursor.hasNext()) {
+      result.push(await cursor.next());
+    }
+    return result;
   }
 }
 
