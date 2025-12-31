@@ -1,21 +1,20 @@
 import amqp from "amqplib";
 import { fork } from "child_process";
 import { Worker } from "worker_threads";
-import { Binary, MongoClient } from "mongodb";
+import { MongoClient, WithId } from "mongodb";
 import {
   checkCollectionToCreate,
   convertEmbeddingsToBSON,
   createIndex,
   getEmbedding,
 } from "../db/mongo";
+import { FileStatusEnum } from "../const/FileStatusEnum";
+import { ChunkType } from "../types/ChunkType";
+import { EmbeddingType } from "../types/EmbeddingType";
 
-type DocType = {
-  pageContent: string;
-  metadata: Record<string, unknown>;
-  id: undefined;
-};
 const dbName = "test_database";
-const collectionName = "chunked_data";
+const chunkedFiles_collection = "chunkedFiles";
+const files_collection = "files";
 
 /**
  * Spawn a process which handles the CPU bound job
@@ -43,13 +42,13 @@ function spawnProcess({ id, url }: { id: string; url: string }) {
 /**
  * Spawn a thread which handles the CPU bound job
  */
-async function spawnThread(url: string) {
+async function spawnThread(downloadUrl: string) {
   return new Promise<Document[]>((resolve, reject) => {
     const worker = new Worker("./dist/broker/workerThread.js", {
-      workerData: url,
+      workerData: downloadUrl,
     });
     // 2. Listen for messages from the worker
-    console.log(`Spawn thread: ${worker.threadId}`);
+    console.log(`Spawn a worker thread of id ${worker.threadId}`);
     worker.on("message", (result: Document[]) => {
       // console.log("thread result:", result);
       resolve(result);
@@ -68,31 +67,50 @@ async function spawnThread(url: string) {
 
 async function handleMessage(msg: amqp.Message) {
   try {
-    const { id, url } = JSON.parse(msg.content.toString());
-    console.log(" [x] Received %s %s", id, url);
-    // Connect to MongoDB then update document status
+    const jsonFile = JSON.parse(msg.content.toString());
+    const { downloadUrl, projectId } = jsonFile;
+    console.log(jsonFile);
+    console.log(" [x] Received file at %s", downloadUrl);
 
-    // Spawn a thread to chunk document, update status to "chunking"
-    const split_docs = (await spawnThread(url)) as unknown as DocType[];
-
-    // Connect to mongoDB to save embeddings
+    // Connect to MongoDB
+    console.log("Connecting to MongoDB");
     const client = new MongoClient(process.env.MONGODB_ATLAS_URI || "");
     await client.connect();
-    const collection = client.db(dbName).collection(collectionName);
 
+    // Update doc status to 'chunking'
+    console.log("Update mongodb document status to 'chunking'");
+    const filesCollection = client.db(dbName).collection(files_collection);
+    // Create the doc if not exist
+    await filesCollection.findOneAndUpdate(
+      { downloadUrl },
+      { $set: jsonFile },
+      { upsert: true }
+    );
+    const mongoFileDoc = (await filesCollection.findOneAndUpdate(
+      { downloadUrl },
+      { $set: { status: FileStatusEnum.CHUNKING } },
+      { returnDocument: "after" }
+    )) as WithId<Document>;
+
+    // Spawn a thread to chunk document
+    const split_docs = (await spawnThread(
+      downloadUrl
+    )) as unknown as ChunkType[];
+
+    // Check collection, gen embeddings and bulk insert embeddings
     console.log(
       "Creating collection and index, generating embeddings and inserting documents..."
     );
-    await checkCollectionToCreate(client);
-    await createIndex(client);
+    const collection = client.db(dbName).collection(chunkedFiles_collection);
+    await checkCollectionToCreate({ connectedClient: client, dbName });
+    await createIndex({
+      connectedClient: client,
+      collectionName: chunkedFiles_collection,
+    });
 
-    // Insert documents with embeddings into collection
-    const insertDocuments: {
-      document: DocType;
-      embedding: number[];
-      bindataEmbedding: Binary;
-    }[] = [];
+    const documentsToInsert: EmbeddingType[] = [];
 
+    // Convert: array of the document and its embeddings -> array of MongoDB documents
     await Promise.all(
       split_docs.map(async (doc) => {
         // Generate embeddings using the function that you defined
@@ -100,25 +118,38 @@ async function handleMessage(msg: amqp.Message) {
         const binData = await convertEmbeddingsToBSON([
           embedding.data[0].embedding,
         ]);
-        // Add the document with the embedding to array of documents for bulk insert
-        insertDocuments.push({
+        documentsToInsert.push({
           document: doc,
           embedding: embedding.data[0].embedding,
           bindataEmbedding: binData,
+          fileId: mongoFileDoc._id,
+          projectId,
         });
       })
     );
 
-    // Make sure the bulk write is all-or-none
-    // Start a Client Session
-    const session = client.startSession();
+    // Begin bulk insert embeddings
+    console.log("Running a transaction to bulk insert embeddings");
+    // Update doc status to 'saving_embeddings'
+    console.log("Update mongodb document status to 'saving_embeddings'");
+    await filesCollection.findOneAndUpdate(
+      { downloadUrl },
+      { $set: { status: FileStatusEnum.SAVING_EMBEDDINGS } }
+    );
+    // Start a Client Session, make sure the bulk write is all-or-none
     // Use withTransaction to start a transaction, execute the callback, and commit (or abort on error)
     // Note: The callback for withTransaction MUST be async and/or return a Promise.
+    const session = client.startSession();
     await session.withTransaction(
       async () => {
-        await collection.insertMany(insertDocuments, {
+        await collection.insertMany(documentsToInsert, {
           ordered: false,
         });
+        // Update doc status to 'saved_embeddings'
+        await filesCollection.findOneAndUpdate(
+          { downloadUrl },
+          { $set: { status: FileStatusEnum.SAVED_EMBEDDINGS } }
+        );
       },
       {
         readPreference: "primary",
@@ -126,8 +157,12 @@ async function handleMessage(msg: amqp.Message) {
         writeConcern: { w: "majority" },
       }
     );
+
+    // Ending job
+    console.log("Ending session and closing MongoDB client connection");
     await session.endSession();
     await client.close();
+
     return true;
   } catch (error) {
     console.log(error);

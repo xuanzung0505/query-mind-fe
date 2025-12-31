@@ -20,6 +20,7 @@ function sumOfPrimes(n: number) {
 
 async function processDoc(download_url: string) {
   try {
+    console.log(`Processing the PDF document from the url: ${download_url}`);
     // 1. Fetch the data
     const response = await fetch(download_url);
 
@@ -34,7 +35,6 @@ async function processDoc(download_url: string) {
     const cleaned_pages = pages.filter(
       (page) => page.pageContent.split(" ").length > 20
     );
-    console.log(cleaned_pages.length);
 
     // 4. split doc into chunks
     const text_splitter = new RecursiveCharacterTextSplitter({

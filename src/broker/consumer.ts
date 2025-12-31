@@ -26,7 +26,16 @@ function sendMessage(channel: amqp.Channel, msg: string) {
 
 consumerInit(
   JSON.stringify({
-    id: "dummyId",
-    url: "https://00rvqhkvqeiasdeh.public.blob.vercel-storage.com/d68f/mongodb.pdf?download=1",
+    mimeType: ".pdf",
+    size: 17005,
+    status: "Uploaded",
+    createdById: "d68f",
+    projectId: "pr10",
+    url: "https://00rvqhkvqeiasdeh.public.blob.vercel-storage.com/d68f/mongodb.pdf",
+    downloadUrl:
+      "https://00rvqhkvqeiasdeh.public.blob.vercel-storage.com/d68f/mongodb.pdf?download=1",
+    pathname: "d68f/mongodb.pdf",
+    createdAt: new Date("2025-12-31T05:34:27.000Z"),
+    updatedAt: new Date("2025-12-31T05:34:27.000Z"),
   })
 );
