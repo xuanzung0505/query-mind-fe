@@ -52,7 +52,7 @@ export async function convertEmbeddingsToBSON(float32_embeddings: number[][]) {
   }
 }
 
-async function checkCollectionToCreate(connectedClient?: MongoClient) {
+export async function checkCollectionToCreate(connectedClient?: MongoClient) {
   try {
     let client = connectedClient;
     if (connectedClient === undefined) {
@@ -76,7 +76,7 @@ async function checkCollectionToCreate(connectedClient?: MongoClient) {
   }
 }
 
-async function createIndex(connectedClient?: MongoClient) {
+export async function createIndex(connectedClient?: MongoClient) {
   try {
     let client = connectedClient;
     if (connectedClient === undefined) {
