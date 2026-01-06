@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Binary, Collection, MongoClient } from "mongodb";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import path from "path";
@@ -7,10 +8,9 @@ import { ChatOpenAI } from "@langchain/openai";
 import OpenAI from "openai";
 import fs from "fs";
 
-const dbName = "test_database";
-const collectionName = "chunked_data";
-const chunkedFiles_collection = "chunkedFiles";
-const files_collection = "files";
+export const dbName = "test_database";
+export const chunkedFiles_collection = "chunkedFiles";
+export const files_collection = "files";
 
 const embeddingSize = 512;
 
@@ -71,13 +71,13 @@ export async function checkCollectionToCreate({
     const collections = await database.collections();
     if (
       collections.find(
-        (collection) => collection.collectionName === collectionName
+        (collection) => collection.collectionName === chunkedFiles_collection
       )
     ) {
       console.log("The collection exists");
     } else {
       console.log("The collection does not exist");
-      await database.createCollection(collectionName);
+      await database.createCollection(chunkedFiles_collection);
     }
   } catch (error) {
     console.log(error);
@@ -183,7 +183,7 @@ async function testMongo() {
 
     const client = new MongoClient(process.env.MONGODB_ATLAS_URI || "");
     await client.connect();
-    const collection = client.db(dbName).collection(collectionName);
+    const collection = client.db(dbName).collection(chunkedFiles_collection);
 
     console.log(
       "Creating collection and index, generating embeddings and inserting documents..."
@@ -191,7 +191,7 @@ async function testMongo() {
     await checkCollectionToCreate({ connectedClient: client, dbName });
     await createIndex({
       connectedClient: client,
-      collectionName: collectionName,
+      collectionName: chunkedFiles_collection,
     });
 
     // Insert documents with embeddings into collection
