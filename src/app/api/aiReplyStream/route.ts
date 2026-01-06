@@ -1,7 +1,7 @@
 import customMiddleware from "@/app/functions/customMiddleware";
-import { GoogleVerifyError, EmptyTokensError } from "@/classes/errors";
 import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
+import isAuthError from "@/utils/isAuthError";
 import OpenAI from "openai";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -44,7 +44,6 @@ export async function POST(request: Request) {
             controller.enqueue(`data: ${JSON.stringify(event)}\n\n`);
           // save message
           if (event.type === "response.output_text.done") {
-            
           }
           // close the connection
           if (event.type === "response.completed") {
@@ -62,7 +61,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    if (error instanceof GoogleVerifyError || error instanceof EmptyTokensError)
+    if (isAuthError(error))
       return new Response(MessageEnum.INVALID_CREDENTIALS, {
         status: StatusCodeEnum.UNAUTHORIZED,
         headers: { "Content-Type": "application/json" },

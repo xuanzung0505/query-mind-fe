@@ -1,7 +1,7 @@
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
-import { EmptyTokensError, GoogleVerifyError } from "@/classes/errors";
 import customMiddleware from "@/app/functions/customMiddleware";
 import { MessageEnum } from "@/const/MessageEnum";
+import isAuthError from "@/utils/isAuthError";
 
 export async function POST(request: Request) {
   // Parse the request body
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     // redirect to /sign-in page
-    if (error instanceof GoogleVerifyError || error instanceof EmptyTokensError)
+    if (isAuthError(error))
       return new Response(
         JSON.stringify({ message: MessageEnum.INVALID_CREDENTIALS }),
         {

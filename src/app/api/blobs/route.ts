@@ -1,11 +1,11 @@
 import customMiddleware from "@/app/functions/customMiddleware";
-import { GoogleVerifyError, EmptyTokensError } from "@/classes/errors";
 import { FileStatusEnum } from "@/const/FileStatusEnum";
 import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
 import { FileService } from "@/db/mongo";
 import { FileType } from "@/types/FileType";
 import { UserType } from "@/types/UserType";
+import isAuthError from "@/utils/isAuthError";
 import { put } from "@vercel/blob";
 import { jwtDecode } from "jwt-decode";
 import { MongoClient } from "mongodb";
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    if (error instanceof GoogleVerifyError || error instanceof EmptyTokensError)
+    if (isAuthError(error))
       return new Response(MessageEnum.INVALID_CREDENTIALS, {
         status: StatusCodeEnum.UNAUTHORIZED,
         headers: { "Content-Type": "application/json" },
@@ -38,7 +38,7 @@ export async function GET(request: Request) {
   }
 
   return new Response(JSON.stringify([]), {
-    status: StatusCodeEnum.OK,
+    status: StatusCodeEnum.INTERNAL_SERVER_ERROR,
     headers: { "Content-Type": "application/json" },
   });
 }
@@ -99,7 +99,7 @@ export async function POST(request: Request) {
       });
     }
   } catch (error) {
-    if (error instanceof GoogleVerifyError || error instanceof EmptyTokensError)
+    if (isAuthError(error))
       return new Response(MessageEnum.INVALID_CREDENTIALS, {
         status: StatusCodeEnum.UNAUTHORIZED,
         headers: { "Content-Type": "application/json" },
