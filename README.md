@@ -38,20 +38,25 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Authentication using Google OAuth2
 
 ### Overview
+
 - API endpoint: api/auth.
 - PAYLOAD: {google_token?: string, access_token?: string, refresh_token?: string}.
 - **Tokens priority**: access_token - refresh_token - google_token.
 - Our access_token and refresh_token contain user info from our DB.
 
 ### Common QA
+
 **Client may have only refresh_token -> what to do?**
+
 - Issue the new access_token using this valid refresh_token, or else move to google_token validation.
 
 **Client may have only access_token -> what to do?**
+
 - Allow using until expired -> NOTE: may need token rotation technique, by invalidating old refresh_token.
 - If the access_token is expired and the client doesn't have an assigned refresh_token -> Client will be requested to sign in again.
 
 ### The Step-by-step implementation
+
 1. Verify tokens according to **Tokens priority** above.
 2. Check/create user -> theres a case where user is to be deactivated.
    1. User not exist: create user -> save to DB.
@@ -63,3 +68,23 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## SSE use cases
 
 ## Message Queue using RabbitMQ
+
+### Background task-handling using worker threads to chunk and embed documents
+
+1. About the broker
+- broker type: point-to-point, distribute message by default - Round Robin (little control, utilize
+  bindings or topics to control which messages to handle)
+- 1 consumer handles 1 message at a time, each consumer runs as a separated process
+   - **PROS**:
+      - simple implementation with ack and retry
+      - no race-condition handling since each consumer only handles 1 msg at a time.
+   - **CONS**:
+      - small number of consumers if running in a local machine - limited resources ->
+  queue overloaded with awaiting messages because of a limited number of consumers
+      - if our MQ system crashes, there's a small chance to lose our message (unfinished messages saving)
+
+2. What it does
+- When document is chunking, update the corresponding doc status in the DB
+- The same goes with other statuses
+- HOW?
+  - the flow is in the background, so its nice to run it in a async manner -> use Message Queue
