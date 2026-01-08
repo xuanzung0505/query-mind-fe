@@ -1,5 +1,8 @@
 import amqp from "amqplib";
-import { QUEUE_NAME } from "./consts";
+import { MAIN_QUEUE } from "./consts";
+import crypto from "crypto";
+import stringify from "json-stable-stringify";
+import { ObjectId } from "mongodb";
 
 async function consumerInit(msg: string) {
   const conn = await amqp.connect({
@@ -13,21 +16,22 @@ async function consumerInit(msg: string) {
 }
 
 /**
- * Message definition:
- * docId
- * docContent
+ * Hash the message under SHA256 then apply the hash as the message Id
  */
 function sendMessage(channel: amqp.Channel, msg: string) {
-  channel.sendToQueue(QUEUE_NAME, Buffer.from(msg), {
-    persistent: true, // an 'acceptable' guarantee that the message can survive rabbitmq restart
+  const contentHash = crypto.createHash("sha256").update(msg).digest("hex"); // Resulting ID looks like "5e8862..."
+  channel.sendToQueue(MAIN_QUEUE, Buffer.from(msg), {
+    messageId: contentHash,
+    persistent: true, // an 'acceptable' guarantee that the message can survive RabbitMQ restart
   });
-  console.log(" [x] Sent '%s'", msg);
+  console.log(" [x] Sent message, id='%s'", contentHash);
 }
 
 consumerInit(
-  JSON.stringify({
-    mimeType: ".pdf",
-    size: 17005,
+  stringify({
+    _id: new ObjectId("69550310e4c8eb1dabf63780"),
+    contentType: "application/pdf",
+    size: 170005,
     status: "Uploaded",
     createdById: "d68f",
     projectId: "pr10",
@@ -37,5 +41,5 @@ consumerInit(
     pathname: "d68f/mongodb.pdf",
     createdAt: new Date("2025-12-31T05:34:27.000Z"),
     updatedAt: new Date("2025-12-31T05:34:27.000Z"),
-  })
+  }) as string
 );

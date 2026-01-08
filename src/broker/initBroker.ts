@@ -1,6 +1,13 @@
 import amqp from "amqplib";
-import { EXCHANGE_NAME, QUEUE_NAME } from "./consts";
 import handleMessage from "./handleMessage";
+import {
+  MAIN_EXCHANGE,
+  MAIN_QUEUE,
+  RETRY_EXCHANGE,
+  RETRY_QUEUE,
+} from "./consts";
+
+const RETRY_INTERVAL = 2 * 60 * 1000; // 2 minutes
 
 // currently we will work with 1 queue and 2 consumers
 async function brokerInit() {
@@ -16,38 +23,57 @@ async function brokerInit() {
   const channel = await conn.createChannel();
   channel.prefetch(1); // This makes sure a worker only processes 1 msg at a time
   // default distribution is round-robin
-  createPublisher(channel);
+  await createPublisher(channel);
 
   // create consumers
-  createConsumer(channel);
-  createConsumer(channel);
+  await createConsumer(channel);
+  await createConsumer(channel);
 }
 
-function createPublisher(channel: amqp.Channel) {
+async function createPublisher(channel: amqp.Channel) {
   console.log(" [x] Init publisher");
-  channel.assertExchange(EXCHANGE_NAME, "fanout", {
+  await channel.assertExchange(MAIN_EXCHANGE, "fanout", {
     durable: true,
   });
-  channel.assertQueue(QUEUE_NAME, {
+  await channel.assertQueue(MAIN_QUEUE, {
     durable: true, // ensure queue can survive rabbitmq node restart
+    arguments: {
+      "x-dead-letter-exchange": RETRY_EXCHANGE,
+      "x-dead-letter-routing-key": "retry",
+    },
   });
+  await channel.bindQueue(MAIN_QUEUE, MAIN_EXCHANGE, "work");
+  channel.assertExchange(RETRY_EXCHANGE, "direct", { durable: true });
+  // 3. Setup Retry Queue (Routes back to Main Exchange after 10s TTL)
+  await channel.assertQueue(RETRY_QUEUE, {
+    durable: true,
+    arguments: {
+      "x-message-ttl": RETRY_INTERVAL,
+      "x-dead-letter-exchange": MAIN_EXCHANGE,
+      "x-dead-letter-routing-key": "work",
+    },
+  });
+  await channel.bindQueue(RETRY_QUEUE, RETRY_EXCHANGE, "retry");
 }
 
-function createConsumer(channel: amqp.Channel) {
+async function createConsumer(channel: amqp.Channel) {
   console.log(" [x] Init consumer");
   // This makes sure the queue is declared before attempting to consume from it
-  // channel.assertQueue(QUEUE_NAME, {
+  // channel.assertQueue(MAIN_QUEUE, {
   // durable: true,
   // });
 
-  channel.consume(
-    QUEUE_NAME,
+  await channel.consume(
+    MAIN_QUEUE,
     async (msg) => {
       if (msg != null) {
         const result = await handleMessage(msg);
         if (result) {
           console.log(" [x] Done");
           channel.ack(msg);
+        } else {
+          console.log(` [x] Message failed, id='${msg.properties.messageId}'`);
+          channel.nack(msg, false, false);
         }
       }
     },

@@ -1,4 +1,4 @@
-import { FileStatusEnum } from "@/const/FileStatusEnum";
+import { FileStatusEnum } from "../const/FileStatusEnum";
 import { UserType } from "./UserType";
 
 export type FileType = {

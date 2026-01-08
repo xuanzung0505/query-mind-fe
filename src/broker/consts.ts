@@ -1,4 +1,4 @@
-const EXCHANGE_NAME = "querymind_docs_process_exchange";
-const QUEUE_NAME = "querymind_docs_process_queue";
-
-export { EXCHANGE_NAME, QUEUE_NAME };
+export const MAIN_QUEUE = "querymind_docs_main_queue";
+export const RETRY_QUEUE = "querymind_docs_retry_queue";
+export const MAIN_EXCHANGE = "querymind_docs_main_exchange";
+export const RETRY_EXCHANGE = "querymind_docs_retry_exchange";
