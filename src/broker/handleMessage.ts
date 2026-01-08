@@ -173,10 +173,9 @@ async function handleMessage(msg: amqp.Message) {
               embedding.data[0].embedding,
             ]);
             documentsToInsert.push({
-              document: doc,
+              document: { ...doc, id: new ObjectId(mongoFileDoc._id) },
               embedding: embedding.data[0].embedding,
               bindataEmbedding: binData,
-              fileId: new ObjectId(mongoFileDoc._id),
               projectId,
             });
           })
