@@ -47,6 +47,21 @@ function ProjectDetailsFilesPage({
     },
   });
 
+  const publishMutation = useMutation({
+    mutationFn: (file: FileType) =>
+      clientApiFetch("/api/blobs/publish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(file),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blobs/publish"] });
+      toast.success("Document published successfully");
+    },
+  });
+
   return (
     <div className="mt-4 flex flex-col gap-2 mx-2 bg-white rounded-xl p-4 shadow-md">
       <div className="text-neutral-700 responsive-text">
@@ -84,7 +99,10 @@ function ProjectDetailsFilesPage({
         </div>
       ) : (
         <div className="container mx-auto">
-          <FileDataTable columns={FileColumns} data={files} />
+          <FileDataTable
+            columns={FileColumns(publishMutation.mutate)}
+            data={files}
+          />
         </div>
       )}
     </div>

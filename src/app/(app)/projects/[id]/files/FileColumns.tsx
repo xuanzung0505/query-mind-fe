@@ -11,7 +11,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Trash } from "lucide-react";
 import Link from "next/link";
 
-export const FileColumns: ColumnDef<FileType>[] = [
+export const FileColumns = (
+  handlePublishDocument: (file: FileType) => void
+): ColumnDef<FileType>[] => [
   {
     accessorKey: "_id",
     header: () => <div className="text-left text-neutral-600">ID</div>,
@@ -60,10 +62,15 @@ export const FileColumns: ColumnDef<FileType>[] = [
         case FileStatusEnum.CHUNKING:
         case FileStatusEnum.ADDING_METADATA:
         case FileStatusEnum.SAVING_EMBEDDINGS:
-        case FileStatusEnum.UPLOADING:
           return (
             <div className="text-yellow-500 font-bold text-center">
               Chunking...
+            </div>
+          );
+        case FileStatusEnum.SAVED_EMBEDDINGS:
+          return (
+            <div className="text-primary-bg font-bold text-center">
+              Adding to context...
             </div>
           );
         case FileStatusEnum.ADDED_TO_CONTEXT:
@@ -96,7 +103,14 @@ export const FileColumns: ColumnDef<FileType>[] = [
         <div className="flex items-center">
           <ButtonGroup>
             {original.status === FileStatusEnum.UPLOADED && (
-              <PrimaryButton>Publish</PrimaryButton>
+              <PrimaryButton
+                onClick={() => {
+                  console.log(original);
+                  handlePublishDocument(original);
+                }}
+              >
+                Publish
+              </PrimaryButton>
             )}
             {original.status === FileStatusEnum.ADDED_TO_CONTEXT && (
               <PrimaryButton>Unpublish</PrimaryButton>

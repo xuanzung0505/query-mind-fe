@@ -11,8 +11,10 @@ async function consumerInit(msg: string) {
     port: 5672,
     frameMax: 8192,
   });
-  const channel = await conn.createChannel();
+  const channel = await conn.createConfirmChannel();
   sendMessage(channel, msg);
+  await channel.waitForConfirms();
+  await conn.close();
 }
 
 /**
