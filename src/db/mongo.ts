@@ -12,6 +12,8 @@ export const dbName = "test_database";
 export const chunkedFiles_collection = "chunkedFiles";
 export const files_collection = "files";
 
+export const vectorIndexName = "vector_index";
+
 const embeddingSize = 512;
 
 // Function to generate embeddings for a given data source
@@ -87,9 +89,11 @@ export async function checkCollectionToCreate({
 export async function createIndex({
   connectedClient,
   collectionName,
+  indexName,
 }: {
   connectedClient?: MongoClient;
   collectionName: string;
+  indexName: string;
 }) {
   try {
     let client = connectedClient;
@@ -101,7 +105,7 @@ export async function createIndex({
     const collection = database.collection(collectionName);
     // Define your Vector Search index
     const index = {
-      name: "vector_index",
+      name: indexName,
       type: "vectorSearch",
       definition: {
         fields: [
@@ -139,6 +143,34 @@ export async function createIndex({
     console.log(result);
   } catch (err) {
     console.log(err);
+  }
+}
+/**
+ * 
+ * No need to check since the index only helps speed up searching
+ */
+export async function checkIndexStatus({
+  collection,
+  indexName,
+}: {
+  collection: Collection;
+  indexName: string;
+}) {
+  const checkInterval = 5 * 1000;
+  let isQueryable = false;
+  while (!isQueryable) {
+    const cursor = collection.listSearchIndexes();
+    for await (const index of cursor) {
+      if (index.name === indexName) {
+        if ((index as typeof index & { queryable: boolean }).queryable) {
+          console.log(`${indexName} is ready for querying.`);
+          isQueryable = true;
+        } else {
+          console.log(`${indexName} is rebuilding.`);
+          await new Promise((resolve) => setTimeout(resolve, checkInterval));
+        }
+      }
+    }
   }
 }
 
@@ -192,6 +224,7 @@ async function testMongo() {
     await createIndex({
       connectedClient: client,
       collectionName: chunkedFiles_collection,
+      indexName: vectorIndexName,
     });
 
     // Insert documents with embeddings into collection

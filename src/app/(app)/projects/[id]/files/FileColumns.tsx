@@ -70,7 +70,7 @@ export const FileColumns = (
         case FileStatusEnum.SAVED_EMBEDDINGS:
           return (
             <div className="text-primary-bg font-bold text-center">
-              Adding to context...
+              Indexing...
             </div>
           );
         case FileStatusEnum.ADDED_TO_CONTEXT:

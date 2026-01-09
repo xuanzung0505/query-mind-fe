@@ -7,6 +7,7 @@ import {
   convertEmbeddingsToBSON,
   createIndex,
   getEmbedding,
+  vectorIndexName,
 } from "../db/mongo";
 import { FileStatusEnum } from "../const/FileStatusEnum";
 import { ChunkType } from "../types/ChunkType";
@@ -81,7 +82,7 @@ const timeout = (ms: number) =>
  * Complete logic to handle a specific message in the broker.
  * Task idempotency:
  * - Before: the file status is UPLOADED, embeddings are not created
- * - After: the file status is SAVED_EMBEDDINGS, embeddings are created
+ * - After: the file status is ADDED_TO_CONTEXT, index is rebuilt, embeddings are recreated
  */
 async function handleMessage(msg: amqp.Message) {
   try {
@@ -132,8 +133,8 @@ async function handleMessage(msg: amqp.Message) {
         })) as FileType | null;
         // If the file is deleted
         if (mongoFileDoc === null) return true;
-        // If the doc is finished, status = saved_embeddings -> early return
-        if (mongoFileDoc.status === FileStatusEnum.SAVED_EMBEDDINGS) {
+        // If the doc is finished, status = added_to_context -> early return
+        if (mongoFileDoc.status === FileStatusEnum.ADDED_TO_CONTEXT) {
           console.log("Mongodb document is successfully processed, closing");
           client.close();
           return true;
@@ -160,10 +161,10 @@ async function handleMessage(msg: amqp.Message) {
         await createIndex({
           connectedClient: client,
           collectionName: chunkedFiles_collection,
+          indexName: vectorIndexName,
         });
 
         const documentsToInsert: EmbeddingType[] = [];
-
         // Convert: array of the document and its embeddings -> array of MongoDB documents
         await Promise.all(
           split_docs.map(async (doc) => {
@@ -203,10 +204,10 @@ async function handleMessage(msg: amqp.Message) {
             await collection.insertMany(documentsToInsert, {
               ordered: false,
             });
-            // Update doc status to 'saved_embeddings'
+            // Update doc status to 'saved_embeddings' -> 'added_to_context'
             await filesCollection.findOneAndUpdate(
-              { downloadUrl },
-              { $set: { status: FileStatusEnum.SAVED_EMBEDDINGS } }
+              { _id: new ObjectId(mongoFileDoc._id) },
+              { $set: { status: FileStatusEnum.ADDED_TO_CONTEXT } }
             );
           },
           {
