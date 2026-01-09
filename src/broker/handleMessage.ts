@@ -195,6 +195,11 @@ async function handleMessage(msg: amqp.Message) {
         const session = client.startSession();
         await session.withTransaction(
           async () => {
+            // Clean up old embeddings
+            await collection.deleteMany({
+              "document.id": new ObjectId(mongoFileDoc._id),
+            });
+            // Insert new embeddings
             await collection.insertMany(documentsToInsert, {
               ordered: false,
             });
