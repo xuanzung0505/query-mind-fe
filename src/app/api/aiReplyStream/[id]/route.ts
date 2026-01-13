@@ -1,15 +1,41 @@
 import customMiddleware from "@/app/functions/customMiddleware";
 import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
+import { getConversationsById } from "@/db/conversations";
+import { UserType } from "@/types/UserType";
 import isAuthError from "@/utils/isAuthError";
+import { jwtDecode } from "jwt-decode";
 import OpenAI from "openai";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const credentials = await customMiddleware(request);
+    const decodedAccessToken = jwtDecode(
+      credentials.access_token as string
+    ) as UserType;
+
     const { query } = await request.json();
-    await customMiddleware(request);
+    const { id: conversationId } = await params;
+    const conversation = await getConversationsById({ conversationId });
+
+    // User must be conversation owner or belongs to the project
+    if (
+      conversation.createdById != decodedAccessToken.id &&
+      conversation.project &&
+      conversation.project.createdById != decodedAccessToken.id &&
+      !conversation.project.collaboratorsId.includes(decodedAccessToken.id)
+    ) {
+      return new Response(MessageEnum.INVALID_CREDENTIALS, {
+        status: StatusCodeEnum.UNAUTHORIZED,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const AIReplyStream = await client.responses.create({
       model: "gpt-5-nano",
       input: [

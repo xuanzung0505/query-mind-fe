@@ -66,6 +66,19 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
    2. Refresh_token is invalid or not exist in the payload -> generate a new pair of {access_token, refresh_token}.
 
 ## SSE use cases
+- Stream query results from OpenAI to our client.
+
+## OpenAI API use cases
+
+### Generate embeddings
+
+### Query (according to a specific context)
+1. Design the endpoint.
+  - /api/aiReplyStream/:conversationId
+2. API flow.
+  - Check the user if he is valid in the system.
+  - Check the user who made request is valid (is the owner of the conversation, or participate in the parent project).
+  - Allow calling AI, add the context if there's a parent project.
 
 ## Message Queue using RabbitMQ
 
@@ -112,17 +125,13 @@ docker run -d --name redis -p 6379:6379 redis:8.4
 redis-cli
 ```
 
-### Use Redis for caching
-
-1. Cache the message hash to handle message duplication
+### Cache the message hash to handle message duplication
 
 - `SET hash "IN_PROGRESS" NX EX 300` (the hash is being processed, with a TTL of **TIMEOUT** seconds, NX ensures that other threads cannot run the same job in parallel)
 - Job is successful: `SET hash "FINISHED" EX 86400` (in 24 hour, no other threads can job this message) -> this method can be improved
 - Job is NOT successful:
   - Job is failed, run `DEL hash`, the message is moved to DLQ: the duplicates of this message can still run the job again
   - Job exceeds **TIMEOUT**: after **TIMEOUT**, the hash is deleted, there might be a chance where there are duplicates in the message queue to run the job again -> Ensure that the job must run with a time constraint of **TIMEOUT**
-
-2. ...
 
 ## Edge cases
 

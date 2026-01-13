@@ -11,7 +11,7 @@ export type ProjectType = {
   conversationsId: string[];
   conversations?: Pick<ConversationType, "id">[];
   filesId: string[]; // must be limited
-  files?: Pick<FileType, "id">[];
+  files?: Pick<FileType, "_id">[];
   createdById: string;
   createdBy: Pick<UserType, "id" | "avatarUrl">;
   createdAt: Date;

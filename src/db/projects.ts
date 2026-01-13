@@ -1,15 +1,19 @@
-import { ConversationType } from "@/types/ConversationType";
 import { BACKEND_URL } from "./const";
+import { ProjectType } from "@/types/ProjectType";
 
-const getProjects = async () => {
+const getProjects = async ({ userId }: { userId: string }) => {
   const res = await fetch(BACKEND_URL + `/projects`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const projects = (await res.json()) as ConversationType[];
-  return projects;
+  // TODO: filter later
+  const projects = (await res.json()) as ProjectType[];
+  return projects.filter(
+    (project) =>
+      project.createdById === userId || project.collaboratorsId.includes(userId)
+  );
 };
 
 const getProjectById = async ({ projectId }: { projectId: string }) => {
@@ -19,8 +23,8 @@ const getProjectById = async ({ projectId }: { projectId: string }) => {
       "Content-Type": "application/json",
     },
   });
-  const projects = (await res.json()) as ConversationType[];
-  return projects;
+  const project = (await res.json()) as ProjectType;
+  return project;
 };
 
 export { getProjects, getProjectById };

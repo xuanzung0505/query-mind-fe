@@ -5,7 +5,7 @@ export type ConversationType = {
   id: string;
   title: string;
   projectId: string;
-  project?: Pick<ProjectType, "title">;
+  project?: Pick<ProjectType, "title" | "collaboratorsId" | "createdById">;
   lastMessage: string;
   lastMessageCreatedAt: Date;
   createdById: string;
