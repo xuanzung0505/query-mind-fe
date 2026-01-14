@@ -51,7 +51,7 @@ function ConversationsSheetContent() {
         conversations.length > 0 &&
         conversations.map((conversation) => (
           <Link
-            href={`/conversations/${conversation.id}`}
+            href={conversation.projectId ? `/projects/${conversation.projectId}/conversations`: `/conversations/${conversation.id}`}
             key={conversation.id}
           >
             <Item
