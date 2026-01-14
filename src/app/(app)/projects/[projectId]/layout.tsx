@@ -8,7 +8,7 @@ import { clientApiFetch } from "@/utils/clientApiFetch";
 import { Tabs, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
-import { use, useMemo } from "react";
+import { use, useEffect, useMemo } from "react";
 
 function useProjectDetails({ projectId }: { projectId: string }) {
   const {
@@ -50,6 +50,14 @@ export default function RootLayout({
   const currentTab = tabs.includes(paths[paths.length - 1])
     ? paths[paths.length - 1]
     : defaultTab;
+
+  // redirect to default tab if none is present
+  useEffect(() => {
+    // project/:id/[conversations|files|sharing] or project/:id/conversation/[...conversationId] is allowed
+    // path is /project/:id -> redirect to default tab
+    if (paths.length === 3)
+      router.replace(`/projects/${projectId}/${defaultTab}`);
+  }, [tabs, router, projectId, paths]);
 
   return (
     <div className="project-details-page p-2">
