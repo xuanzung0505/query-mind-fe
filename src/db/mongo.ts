@@ -118,15 +118,19 @@ export async function createIndex({
           },
           {
             type: "filter",
-            path: "hasCode",
+            path: "document.metadata.hasCode",
           },
           {
             type: "filter",
-            path: "keyword",
+            path: "document.metadata.keywords",
           },
           {
             type: "filter",
-            path: "title",
+            path: "document.metadata.title",
+          },
+          {
+            type: "filter",
+            path: "projectId",
           },
         ],
       },
