@@ -10,6 +10,7 @@ import {
   CollapsibleContent,
 } from "@radix-ui/react-collapsible";
 import React from "react";
+import { marked } from "marked";
 
 function MessagesClientList({
   isLoading,
@@ -90,11 +91,12 @@ function MessagesClientList({
                       <div
                         className={cn(
                           "bg-neutral-200 rounded-xl p-4 float-left",
-                          "text-left sm:max-w-[500px]"
+                          "text-left sm:max-w-[500px] message-block"
                         )}
-                      >
-                        {incomingAIWord}
-                      </div>
+                        dangerouslySetInnerHTML={{
+                          __html: marked.parse(incomingAIWord),
+                        }}
+                      ></div>
                     </CollapsibleTrigger>
                   </div>
                   <CollapsibleContent
@@ -123,11 +125,10 @@ function MessagesClientList({
                       createdById == currentUserId
                         ? "bg-primary-bg text-white rounded-xl rounded-tr-none p-4 float-right"
                         : "bg-neutral-200 rounded-xl p-4 float-left",
-                      "text-left sm:max-w-[500px]"
+                      "text-left sm:max-w-[500px] message-block"
                     )}
-                  >
-                    {text}
-                  </div>
+                    dangerouslySetInnerHTML={{ __html: marked.parse(text) }}
+                  ></div>
                 </CollapsibleTrigger>
               </div>
               <CollapsibleContent

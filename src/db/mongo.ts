@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Binary, Collection, MongoClient } from "mongodb";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
@@ -251,10 +252,10 @@ async function testMongo() {
     // begin querying
     const query = "How to update a document without overwriting it?";
     const queryEmbedding = (await getEmbedding(query)).data[0].embedding;
-    fs.writeFileSync(
-      path.join(process.cwd(), "public/query_embedding.txt"),
-      queryEmbedding.toString()
-    );
+    // fs.writeFileSync(
+    //   path.join(process.cwd(), "public/query_embedding.txt"),
+    //   queryEmbedding.toString()
+    // );
     const pipeline = [
       {
         $vectorSearch: {
