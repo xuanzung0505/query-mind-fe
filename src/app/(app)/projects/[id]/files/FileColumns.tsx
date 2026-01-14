@@ -11,9 +11,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Trash } from "lucide-react";
 import Link from "next/link";
 
-export const FileColumns: ColumnDef<FileType>[] = [
+export const FileColumns = (
+  handlePublishDocument: (file: FileType) => void
+): ColumnDef<FileType>[] => [
   {
-    accessorKey: "id",
+    accessorKey: "_id",
     header: () => <div className="text-left text-neutral-600">ID</div>,
   },
   {
@@ -24,19 +26,21 @@ export const FileColumns: ColumnDef<FileType>[] = [
       return (
         <div>
           <Link
-            href={original.fileUrl}
+            href={original.url}
             target="_blank"
             className="text-primary-bg underline"
           >
-            {original.fileUrl}
+            {original.url}
           </Link>
         </div>
       );
     },
   },
   {
-    accessorKey: "mimeType",
-    header: () => <div className="text-center text-neutral-600">Mime type</div>,
+    accessorKey: "contentType",
+    header: () => (
+      <div className="text-center text-neutral-600">contentType</div>
+    ),
   },
   {
     accessorKey: "size",
@@ -58,10 +62,15 @@ export const FileColumns: ColumnDef<FileType>[] = [
         case FileStatusEnum.CHUNKING:
         case FileStatusEnum.ADDING_METADATA:
         case FileStatusEnum.SAVING_EMBEDDINGS:
-        case FileStatusEnum.UPLOADING:
           return (
             <div className="text-yellow-500 font-bold text-center">
               Chunking...
+            </div>
+          );
+        case FileStatusEnum.SAVED_EMBEDDINGS:
+          return (
+            <div className="text-primary-bg font-bold text-center">
+              Indexing...
             </div>
           );
         case FileStatusEnum.ADDED_TO_CONTEXT:
@@ -94,7 +103,14 @@ export const FileColumns: ColumnDef<FileType>[] = [
         <div className="flex items-center">
           <ButtonGroup>
             {original.status === FileStatusEnum.UPLOADED && (
-              <PrimaryButton>Publish</PrimaryButton>
+              <PrimaryButton
+                onClick={() => {
+                  console.log(original);
+                  handlePublishDocument(original);
+                }}
+              >
+                Publish
+              </PrimaryButton>
             )}
             {original.status === FileStatusEnum.ADDED_TO_CONTEXT && (
               <PrimaryButton>Unpublish</PrimaryButton>

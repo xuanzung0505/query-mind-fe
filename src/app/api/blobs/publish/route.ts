@@ -1,19 +1,19 @@
 import customMiddleware from "@/app/functions/customMiddleware";
 import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
-import { getProjects } from "@/db/projects";
-import { UserType } from "@/types/UserType";
+import { FileType } from "@/types/FileType";
 import isAuthError from "@/utils/isAuthError";
-import { jwtDecode } from "jwt-decode";
+import { publishToQueue } from "@/utils/queueHelper";
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
-    const credentials = await customMiddleware(request);
-    const decodedAccessToken = jwtDecode(
-      credentials.access_token as string
-    ) as UserType;
-    const projects = await getProjects({ userId: decodedAccessToken.id });
-    return new Response(JSON.stringify(projects), {
+    await customMiddleware(request);
+    const body = await request.json();
+
+    // publish to queue
+    await publishToQueue(body as FileType);
+
+    return new Response(JSON.stringify({ success: true }), {
       status: StatusCodeEnum.OK,
       headers: { "Content-Type": "application/json" },
     });
@@ -25,9 +25,8 @@ export async function GET(request: Request) {
       });
     else console.log(error);
   }
-
-  return new Response(JSON.stringify([]), {
-    status: StatusCodeEnum.OK,
+  return new Response(JSON.stringify({ success: false }), {
+    status: StatusCodeEnum.INTERNAL_SERVER_ERROR,
     headers: { "Content-Type": "application/json" },
   });
 }

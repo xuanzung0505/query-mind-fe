@@ -100,7 +100,7 @@ function ConversationDetailsPage({
       ...messages,
     ]);
     fetchSseStream({
-      url: "/api/aiReplyStream",
+      url: `/api/aiReplyStream/${conversationId}`,
       postData: { query: message },
       status: AIStatus,
       setStatus: setAIStatus,

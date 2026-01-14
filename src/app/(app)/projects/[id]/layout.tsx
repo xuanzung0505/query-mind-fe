@@ -54,7 +54,7 @@ export default function RootLayout({
   // redirect to default tab if none is present
   useEffect(() => {
     if (!tabs.includes(paths[paths.length - 1])) {
-      router.push(`/projects/${projectId}/${defaultTab}`);
+      router.replace(`/projects/${projectId}/${defaultTab}`);
     }
   }, [tabs, router, projectId, paths]);
 

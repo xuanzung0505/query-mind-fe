@@ -83,7 +83,7 @@ function ProjectDetailsConversationsPage() {
       ...messages,
     ]);
     fetchSseStream({
-      url: "/api/aiReplyStream",
+      url: `/api/aiReplyStream/${conversation?.id}`,
       postData: { query: message },
       status: AIStatus,
       setStatus: setAIStatus,
