@@ -57,7 +57,14 @@ function ConversationsClientList() {
       {Array.isArray(conversations) &&
         conversations.length > 0 &&
         conversations.map((conversation) => (
-          <Link href={conversation.projectId ? `projects/${conversation.projectId}/conversations`: `conversations/${conversation.id}`} key={conversation.id}>
+          <Link
+            href={
+              conversation.projectId
+                ? `projects/${conversation.projectId}/conversations/${conversation.id}`
+                : `conversations/${conversation.id}`
+            }
+            key={conversation.id}
+          >
             <Item
               className={`border-1 shadow-md cursor-pointer transition-transform hover:translate-x-2
                  active:translate-x-1 ease-in-out`}

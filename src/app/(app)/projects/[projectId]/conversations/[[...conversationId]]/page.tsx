@@ -24,14 +24,23 @@ import getIsTouchDevice from "@/utils/getIsTouchDevice";
 import { useQuery } from "@tanstack/react-query";
 import { Send, MessageCirclePlus } from "lucide-react";
 import OpenAI from "openai";
-import React, { useContext, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
-import ProjectConversationsList from "../ProjectConversationsList";
+import ProjectConversationsList from "../../ProjectConversationsList";
 import { ProjectContext } from "@/contexts/ProjectContext";
 
 const currentUserId = "d68f";
 
-function ProjectDetailsConversationsPage() {
+function ProjectDetailsConversationsPage({
+  params,
+}: {
+  params: Promise<{ conversationId: string }>;
+}) {
+  const { conversationId: listSegments } = use(params);
+  const defaultConversationId: string | undefined = Array.isArray(listSegments)
+    ? listSegments[0]
+    : undefined;
+
   const { isProjectLoading, project } = useContext(ProjectContext);
   const [conversation, setConversation] = useState<
     undefined | ConversationType
@@ -131,7 +140,12 @@ function ProjectDetailsConversationsPage() {
                 defaultOpen={true}
               >
                 <ProjectConversationsList
-                  {...{ projectId: project?.id, conversation, setConversation }}
+                  {...{
+                    projectId: project?.id,
+                    conversation,
+                    setConversation,
+                    defaultConversationId,
+                  }}
                 />
               </ConversationsSheet>
               <span className="flex-9 line-clamp-2">
@@ -208,7 +222,12 @@ function ProjectDetailsConversationsPage() {
           <Divider />
           <CardContent className="p-2 flex flex-col gap-2">
             <ProjectConversationsList
-              {...{ projectId: project?.id, conversation, setConversation }}
+              {...{
+                projectId: project?.id,
+                conversation,
+                setConversation,
+                defaultConversationId,
+              }}
             />
           </CardContent>
         </Card>

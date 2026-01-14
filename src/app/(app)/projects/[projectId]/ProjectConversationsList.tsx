@@ -18,12 +18,14 @@ function ProjectConversationsList({
   projectId,
   conversation,
   setConversation,
+  defaultConversationId,
 }: {
   projectId?: string;
   conversation: ConversationType | undefined;
   setConversation: React.Dispatch<
     React.SetStateAction<ConversationType | undefined>
   >;
+  defaultConversationId: string | undefined;
 }) {
   const {
     isLoading,
@@ -43,10 +45,14 @@ function ProjectConversationsList({
   });
 
   useEffect(() => {
-    if (isFetched) {
-      setConversation(conversations!.at(0));
+    if (isFetched && Array.isArray(conversations)) {
+      setConversation(
+        defaultConversationId
+          ? conversations.find((convo) => convo.id === defaultConversationId)
+          : conversations.at(0)
+      );
     }
-  }, [isFetched, conversations, setConversation]);
+  }, [isFetched, conversations, setConversation, defaultConversationId]);
 
   if (isLoading)
     return (

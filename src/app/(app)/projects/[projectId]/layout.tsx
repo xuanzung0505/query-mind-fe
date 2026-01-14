@@ -8,7 +8,7 @@ import { clientApiFetch } from "@/utils/clientApiFetch";
 import { Tabs, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
-import { use, useEffect, useMemo } from "react";
+import { use, useMemo } from "react";
 
 function useProjectDetails({ projectId }: { projectId: string }) {
   const {
@@ -35,9 +35,9 @@ export default function RootLayout({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ id: string }>;
+  params: Promise<{ projectId: string }>;
 }>) {
-  const { id: projectId } = use(params);
+  const { projectId } = use(params);
   const { isLoading: isProjectLoading, project } = useProjectDetails({
     projectId,
   });
@@ -50,13 +50,6 @@ export default function RootLayout({
   const currentTab = tabs.includes(paths[paths.length - 1])
     ? paths[paths.length - 1]
     : defaultTab;
-
-  // redirect to default tab if none is present
-  useEffect(() => {
-    if (!tabs.includes(paths[paths.length - 1])) {
-      router.replace(`/projects/${projectId}/${defaultTab}`);
-    }
-  }, [tabs, router, projectId, paths]);
 
   return (
     <div className="project-details-page p-2">
