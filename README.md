@@ -68,17 +68,26 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## SSE use cases
 - Stream query results from OpenAI to our client.
 
-## OpenAI API use cases
+## Core RAG concept with MongoDB Atlas & OpenAI API
 
-### Generate embeddings
+### Generate embeddings with OpenAI
+- The model is "text-embedding-3-small" for effective costs.
+- Dimension is 512.
 
-### Query (according to a specific context)
+### "Retrieve" data with MongoDB Atlas and "Augmented-Generation" with OpenAI LLM (RAG)
 1. Design the endpoint.
   - /api/aiReplyStream/:conversationId
 2. API flow.
   - Check the user if he is valid in the system.
   - Check the user who made request is valid (is the owner of the conversation, or participate in the parent project).
   - Allow calling AI, add the context if there's a parent project.
+3. MongoDB vector search index.
+  - Adhere to MongoDB Atlas manual on how to setup vector search indexes.
+  - Convert to embeddings to BSON.
+  - Similarity check is cosine.
+  - Add pre-filter to pre filtering the unwanted embeddings before querying.
+4. Generate embeddings from query + find the saved embeddings = push to LLM models to generate results.
+5. Generate response with "gpt-5-nano" for minimal cost.
 
 ## Message Queue using RabbitMQ
 
@@ -105,7 +114,7 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-manag
 
 2. What it does
 
-- When document is being chunked, i will update the corresponding doc status in the DB, the same goes with other message statuses.
+- When document is being chunked, we will update the corresponding doc status in the DB, the same goes with other message statuses.
 - The flow will run in the background and might be CPU bound job, so its nice to run it asynchronously -> utilize a message queue.
 
 3. Things to consider
