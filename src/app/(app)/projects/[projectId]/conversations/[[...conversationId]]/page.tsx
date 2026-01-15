@@ -28,6 +28,7 @@ import React, { use, useContext, useEffect, useState } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import ProjectConversationsList from "../../ProjectConversationsList";
 import { ProjectContext } from "@/contexts/ProjectContext";
+import { useRouter } from "next/navigation";
 
 const currentUserId = "d68f";
 
@@ -40,6 +41,7 @@ function ProjectDetailsConversationsPage({
   const defaultConversationId: string | undefined = Array.isArray(listSegments)
     ? listSegments[0]
     : undefined;
+  const router = useRouter();
 
   const { isProjectLoading, project } = useContext(ProjectContext);
   const [conversation, setConversation] = useState<
@@ -108,6 +110,15 @@ function ProjectDetailsConversationsPage({
     });
     setMessage("");
   };
+
+  // set route to the current selected conversation
+  useEffect(() => {
+    if (project !== undefined && conversation !== undefined) {
+      router.replace(
+        `/projects/${project.id}/conversations/${conversation.id}`
+      );
+    }
+  }, [router, project, conversation]);
 
   useEffect(() => {
     if (AIStatus === StreamStatus.FINISHED && incomingAIWord) {
