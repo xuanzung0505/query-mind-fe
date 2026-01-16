@@ -1,7 +1,7 @@
 export type MessageType = {
-  id: string;
+  id: string | "greeting";
   text: string;
-  conversationId: string;
+  conversationId: string | undefined;
   createdById: string | "AI";
   createdAt: Date;
   updatedAt: Date;

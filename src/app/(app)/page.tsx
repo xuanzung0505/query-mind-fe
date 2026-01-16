@@ -2,6 +2,7 @@ import Image from "next/image";
 import { serverApiFetch } from "@/utils/serverApiFetch";
 import { Plus } from "lucide-react";
 import PrimaryButton from "@/components/PrimaryButton";
+import Link from "next/link";
 // import type { Metadata } from "next";
 
 // export const metadata: Metadata = {
@@ -40,10 +41,12 @@ export default async function HomePage() {
           explore new topics. Your AI conversations will appear here.
         </div>
         <div className="mt-10">
-          <PrimaryButton>
-            <Plus />
-            New Conversation
-          </PrimaryButton>
+          <Link href={"/conversations/new"}>
+            <PrimaryButton>
+              <Plus />
+              New Conversation
+            </PrimaryButton>
+          </Link>
         </div>
       </div>
     </div>

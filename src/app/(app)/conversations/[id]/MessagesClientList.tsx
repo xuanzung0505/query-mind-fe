@@ -18,14 +18,16 @@ function MessagesClientList({
   currentUserId,
   incomingAIWord,
   AIStatus,
+  conversationId,
 }: {
   isLoading: boolean;
   messages: MessageType[];
   currentUserId: string;
   incomingAIWord: string;
   AIStatus: string;
+  conversationId: string | undefined;
 }) {
-  if (isLoading)
+  if (isLoading && conversationId !== undefined)
     return (
       <>
         {Array(6)
@@ -112,7 +114,9 @@ function MessagesClientList({
           {messages.map(({ id, text, createdById, createdAt }, index) => (
             <Collapsible
               key={id ?? index}
-              className={`flex flex-col-reverse gap-2`}
+              className={`flex flex-col-reverse gap-2${
+                id === "greeting" ? " animate-bounce-up-custom" : ""
+              }`}
             >
               <div
                 className={

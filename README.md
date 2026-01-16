@@ -66,26 +66,35 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
    2. Refresh_token is invalid or not exist in the payload -> generate a new pair of {access_token, refresh_token}.
 
 ## SSE use cases
+
 - Stream query results from OpenAI to our client.
 
 ## Core RAG concept with MongoDB Atlas & OpenAI API
 
 ### Generate embeddings with OpenAI
+
 - The model is "text-embedding-3-small" for effective costs.
 - Dimension is 512.
 
 ### "Retrieve" data with MongoDB Atlas and "Augmented-Generation" with OpenAI LLM (RAG)
+
 1. Design the endpoint.
-  - /api/aiReplyStream/:conversationId
+
+- /api/aiReplyStream/:conversationId
+
 2. API flow.
-  - Check the user if he is valid in the system.
-  - Check the user who made request is valid (is the owner of the conversation, or participate in the parent project).
-  - Allow calling AI, add the context if there's a parent project.
+
+- Check the user if he is valid in the system.
+- Check the user who made request is valid (is the owner of the conversation, or participate in the parent project).
+- Allow calling AI, add the context if there's a parent project.
+
 3. MongoDB vector search index.
-  - Adhere to MongoDB Atlas manual on how to setup vector search indexes.
-  - Convert to embeddings to BSON.
-  - Similarity check is cosine.
-  - Add pre-filter to pre filtering the unwanted embeddings before querying.
+
+- Adhere to MongoDB Atlas manual on how to setup vector search indexes.
+- Convert to embeddings to BSON.
+- Similarity check is cosine.
+- Add pre-filter to pre filtering the unwanted embeddings before querying.
+
 4. Generate embeddings from query + find the saved embeddings = push to LLM models to generate results.
 5. Generate response with "gpt-5-nano" for minimal cost.
 
@@ -141,6 +150,22 @@ redis-cli
 - Job is NOT successful:
   - Job is failed, run `DEL hash`, the message is moved to DLQ: the duplicates of this message can still run the job again
   - Job exceeds **TIMEOUT**: after **TIMEOUT**, the hash is deleted, there might be a chance where there are duplicates in the message queue to run the job again -> Ensure that the job must run with a time constraint of **TIMEOUT**
+
+## Manage conversations state
+
+- OpenAI provides a few ways to manage conversations state, which is important for preserving information across multiple messages or turns in a conversation.
+- We can manage using OpenAI Conversation API or the manual way.
+
+### OpenAI Conversation API
+- Pros: easier to manage, we only have to pass the conversation id in each request to retain the state.
+- Cons: None.
+
+### Manage conversations manually
+- Pros: lower cost and better control of the logic.
+- Cons: We have to pass the previous inputs and responses to retrieve the next response -> increased complexity.
+
+### Pick the method
+- We will choose the Conversation API, OpenAI charges on how large the context window is. This method removes the step to manual include information about previous inputs and responses, no additional billings incur.
 
 ## Edge cases
 

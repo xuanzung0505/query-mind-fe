@@ -1,5 +1,35 @@
 import { ConversationType } from "@/types/ConversationType";
 import { BACKEND_URL } from "./const";
+import { getProjectById } from "./projects";
+
+const createAConversation = async (
+  payload: Omit<
+    ConversationType,
+    "id" | "lastMessageCreatedAt" | "createdAt" | "updatedAt"
+  >
+) => {
+  const now = new Date();
+  const res = await fetch(BACKEND_URL + `/conversations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ...payload,
+      lastMessageCreatedAt: now,
+      createdAt: now,
+      updatedAt: now,
+    }),
+  });
+  const conversation = (await res.json()) as ConversationType;
+
+  // TODO: aggregate later
+  if (conversation.projectId) {
+    const project = await getProjectById({ projectId: conversation.projectId });
+    conversation.project = project;
+  }
+  return conversation;
+};
 
 const getConversations = async (params?: { projectId?: string }) => {
   const res = await fetch(BACKEND_URL + `/conversations`, {
@@ -19,7 +49,7 @@ const getConversations = async (params?: { projectId?: string }) => {
   return conversations;
 };
 
-const getConversationsById = async ({
+const getConversationById = async ({
   conversationId,
 }: {
   conversationId: string;
@@ -34,4 +64,4 @@ const getConversationsById = async ({
   return conversation;
 };
 
-export { getConversations, getConversationsById };
+export { createAConversation, getConversations, getConversationById };

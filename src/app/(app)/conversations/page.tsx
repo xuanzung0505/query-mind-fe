@@ -3,6 +3,7 @@
 import PrimaryButton from "@/components/PrimaryButton";
 import { Plus } from "lucide-react";
 import ConversationsClientList from "./ConversationsClientList";
+import Link from "next/link";
 
 export default function ConversationsPage() {
   return (
@@ -14,10 +15,12 @@ export default function ConversationsPage() {
           >
             Your conversations
           </span>
-          <PrimaryButton additionalClassName="flex items-center gap-2">
-            <Plus />
-            <span className="hidden md:block">New Conversation</span>
-          </PrimaryButton>
+          <Link href={"/conversations/new"}>
+            <PrimaryButton additionalClassName="flex items-center gap-2">
+              <Plus />
+              <span className="hidden md:block">New Conversation</span>
+            </PrimaryButton>
+          </Link>
         </div>
         <div className="flex w-full mt-8 flex-col gap-6">
           <ConversationsClientList />

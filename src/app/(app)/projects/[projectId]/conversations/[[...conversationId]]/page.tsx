@@ -177,6 +177,7 @@ function ProjectDetailsConversationsPage({
                 currentUserId,
                 incomingAIWord,
                 AIStatus,
+                conversationId: conversation?.id,
               }}
             />
           </CardContent>
@@ -269,6 +270,7 @@ function ProjectDetailsConversationsPage({
                 currentUserId,
                 incomingAIWord,
                 AIStatus,
+                conversationId: conversation?.id,
               }}
             />
           </CardContent>

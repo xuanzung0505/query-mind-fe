@@ -8,6 +8,7 @@ export type ConversationType = {
   project?: Pick<ProjectType, "title" | "collaboratorsId" | "createdById">;
   lastMessage: string;
   lastMessageCreatedAt: Date;
+  openAIConversationId: string;
   createdById: string;
   createdBy?: Pick<UserType, "id">;
   createdAt: Date;
