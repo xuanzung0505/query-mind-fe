@@ -14,13 +14,13 @@ function PrimaryButton({
 }) {
   return (
     <Button
+      size={size}
+      {...props}
       className={cn(
         `px-4 sm:px-8 md:px-10 bg-primary-bg text-primary-foreground hover:opacity-90 cursor-pointer 
         active:border-black active:opacity-90`,
         additionalClassName
       )}
-      size={size}
-      {...props}
     >
       {children}
     </Button>

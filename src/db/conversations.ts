@@ -61,6 +61,11 @@ const getConversationById = async ({
     },
   });
   const conversation = (await res.json()) as ConversationType;
+  // TODO: aggregate later
+  if (conversation.projectId) {
+    const project = await getProjectById({ projectId: conversation.projectId });
+    conversation.project = project;
+  }
   return conversation;
 };
 
