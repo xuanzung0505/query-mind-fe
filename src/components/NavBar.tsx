@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useContext, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Brand from "./Brand";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,13 @@ import { UserType } from "@/types/UserType";
 import { clientApiFetch } from "@/utils/clientApiFetch";
 import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "./ui/skeleton";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import PrimaryButton from "./PrimaryButton";
+import { Spinner } from "./ui/spinner";
 
 const BrandButtonNavBar = (props: {
   className: string;
@@ -28,6 +35,7 @@ const BrandButtonNavBar = (props: {
 };
 
 function NavBar() {
+  const router = useRouter();
   const { setUser } = useContext(UserContext);
   const pathname = usePathname();
   // const parentDir = pathname.split("/")[1];
@@ -36,6 +44,15 @@ function NavBar() {
   //   { title: "Conversations", url: "/conversations" },
   //   { title: "Projects", url: "/projects" },
   // ];
+
+  const { fetchStatus, refetch } = useQuery({
+    queryKey: ["me", "sign-out"],
+    queryFn: () =>
+      clientApiFetch(`${process.env.NEXT_PUBLIC_HOST_URL}/api/me/sign-out`, {
+        method: "GET",
+      }),
+    enabled: false,
+  });
 
   const { isLoading, isFetched, data } = useQuery({
     queryKey: ["me"],
@@ -63,18 +80,45 @@ function NavBar() {
       />
       <BrandButtonNavBar {...{ pathname, className: "flex justify-center" }} />
       <div className="flex justify-end">
-        <Avatar className="rounded-full">
-          {isLoading ? (
-            <Skeleton className="h-[250px] w-[250px] rounded-full" />
-          ) : (
-            <Image
-              src={(data as UserType).avatarUrl}
-              alt="creator-avatar"
-              width={200}
-              height={200}
-            />
-          )}
-        </Avatar>
+        {isLoading ? (
+          <Avatar className="rounded-full">
+            <Skeleton className="w-32 h-32" />
+          </Avatar>
+        ) : (
+          <Popover>
+            <PopoverTrigger className="active:opacity-80 hover:opacity-80 hover:cursor-pointer rounded-full">
+              <Avatar className="rounded-full">
+                <Image
+                  src={(data as UserType).avatarUrl}
+                  alt="creator-avatar"
+                  width={200}
+                  height={200}
+                />
+              </Avatar>
+            </PopoverTrigger>
+            <PopoverContent className="rounded-none rounded-tl-md rounded-b-md p-1 bg-neutral-200/80 w-auto h-auto border-none">
+              <PrimaryButton
+                additionalClassName="bg-red-700"
+                onClick={() => {
+                  if (fetchStatus === "fetching") return;
+                  refetch().finally(() => {
+                    router.push("/sign-in");
+                  });
+                }}
+                disabled={fetchStatus === "fetching"}
+              >
+                {fetchStatus === "fetching" ? (
+                  <>
+                    <Spinner />
+                    Signing out...
+                  </>
+                ) : (
+                  "Sign out"
+                )}
+              </PrimaryButton>
+            </PopoverContent>
+          </Popover>
+        )}
       </div>
       {/* <div className="flex text-sm sm:text-base sm:gap-2 md:gap-4 justify-center lg:gap-6">
         {menuList.map((menu, index) => (

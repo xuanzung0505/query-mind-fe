@@ -1,12 +1,14 @@
 "use client";
 
+import { StatusCodeEnum } from "@/const/StatusCodeEnum";
+
 /**
  * Client fetching with additional headers such as authorization, which server fetching doesn't have
  */
 async function clientApiFetch<T>(url: string, options: RequestInit) {
   const response = await fetch(url, options);
   // Check for 401 Unauthorized status
-  if (response.status === 401) {
+  if (response.status === StatusCodeEnum.UNAUTHORIZED) {
     console.warn("401 Unauthorized - Redirecting to sign-in...");
     if (typeof window !== "undefined") {
       // Use a client-side navigation method here since this utility runs in the browser
