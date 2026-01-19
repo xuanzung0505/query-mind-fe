@@ -13,58 +13,48 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useSidebar } from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ConversationType } from "@/types/ConversationType";
 import { MessageType } from "@/types/MessageType";
-import { clientApiFetch } from "@/utils/clientApiFetch";
 import fetchSseStream, { StreamStatus } from "@/utils/fetchSseStream";
 import getIsTouchDevice from "@/utils/getIsTouchDevice";
-import { useQuery } from "@tanstack/react-query";
 import { Send, MessageCirclePlus } from "lucide-react";
 import OpenAI from "openai";
-import React, { use, useContext, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useRef, useState } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
 import ProjectConversationsList from "../../ProjectConversationsList";
 import { ProjectContext } from "@/contexts/ProjectContext";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { UserContext } from "@/contexts/UserContext";
+import Link from "next/link";
+import CustomEventType from "@/types/CustomEventType";
 
 function ProjectDetailsConversationsPage({
   params,
 }: {
-  params: Promise<{ projectId: string; conversationId: string }>;
+  params: Promise<{ projectId: string }>;
 }) {
-  const { projectId, conversationId: listSegments } = use(params);
-  const defaultConversationId: string | undefined = Array.isArray(listSegments)
-    ? listSegments[0]
-    : undefined;
+  const { projectId } = use(params);
+  const defaultConversationId = "new";
   const router = useRouter();
   const { userId: currentUserId } = useContext(UserContext);
-  const { isProjectLoading, project } = useContext(ProjectContext);
-  const [conversation, setConversation] = useState<
-    undefined | ConversationType
-  >();
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const conversationRef = useRef<undefined | ConversationType>(undefined);
+  const conversationId = undefined;
 
-  const {
-    isLoading,
-    isFetched,
-    data: queriedMessages,
-  } = useQuery({
-    queryKey: ["conversations", conversation?.id, "messages"],
-    queryFn: () =>
-      clientApiFetch<MessageType[]>(
-        `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversation?.id}/messages`,
-        {
-          method: "GET",
-        }
-      ),
-    enabled: conversation !== undefined,
-  });
+  const { isProjectLoading, project } = useContext(ProjectContext);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<MessageType[]>([
+    {
+      id: "greeting",
+      text: "Hi, I am QueryMind Bot, how can i help you?",
+      conversationId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdById: "AI",
+    },
+  ]);
+
   const {
     status: AIStatus,
     setStatus: setAIStatus,
@@ -74,14 +64,8 @@ function ProjectDetailsConversationsPage({
   const { open: isSidebarOpen } = useSidebar();
   const isMobile = useIsMobile();
 
-  useEffect(() => {
-    if (isFetched && Array.isArray(queriedMessages)) {
-      setMessages(queriedMessages);
-    }
-  }, [isFetched, queriedMessages]);
-
   const handleSendMessage = () => {
-    if (isLoading || isProjectLoading || message.trim() === "") return;
+    if (isProjectLoading || message.trim() === "") return;
     setMessages([
       {
         id: crypto.randomUUID(),
@@ -89,36 +73,37 @@ function ProjectDetailsConversationsPage({
         createdById: currentUserId,
         createdAt: new Date(),
         updatedAt: new Date(),
-        conversationId: conversation!.id,
+        conversationId: conversationId,
       },
       ...messages,
     ]);
     fetchSseStream({
-      url: `/api/aiReplyStream/${conversation?.id}`,
-      postData: { query: message },
+      url: `/api/aiReplyStream/new`,
+      postData: { query: message, projectId },
       status: AIStatus,
       setStatus: setAIStatus,
-      handleEvent: (parsedEvent: OpenAI.Responses.ResponseStreamEvent) => {
+      handleEvent: (
+        parsedEvent: OpenAI.Responses.ResponseStreamEvent | CustomEventType
+      ) => {
+        if (parsedEvent.type === "conversation.created") {
+          conversationRef.current = parsedEvent.data.conversation;
+        }
         if (parsedEvent.type === "response.created") {
         }
         if (parsedEvent.type === "response.output_text.delta") {
           setIncomingAIWord((prev) => prev + parsedEvent.delta);
         }
         if (parsedEvent.type === "response.completed") {
+          if (conversationRef.current) {
+            router.replace(
+              `/projects/${projectId}/conversations/${conversationRef.current.id}`
+            );
+          }
         }
       },
     });
     setMessage("");
   };
-
-  // set route to the current selected conversation
-  useEffect(() => {
-    if (project !== undefined && conversation !== undefined) {
-      router.replace(
-        `/projects/${project.id}/conversations/${conversation.id}`
-      );
-    }
-  }, [router, project, conversation]);
 
   useEffect(() => {
     if (AIStatus === StreamStatus.FINISHED && incomingAIWord) {
@@ -129,13 +114,13 @@ function ProjectDetailsConversationsPage({
           createdById: "AI",
           createdAt: new Date(),
           updatedAt: new Date(),
-          conversationId: conversation!.id,
+          conversationId: conversationId,
         },
         ...messages,
       ]);
       setIncomingAIWord("");
     }
-  }, [AIStatus, setIncomingAIWord, incomingAIWord, conversation, messages]);
+  }, [AIStatus, setIncomingAIWord, conversationId, incomingAIWord, messages]);
 
   if (isMobile)
     return (
@@ -153,19 +138,11 @@ function ProjectDetailsConversationsPage({
                 <ProjectConversationsList
                   {...{
                     projectId: project?.id,
-                    conversation,
-                    setConversation,
                     defaultConversationId,
                   }}
                 />
               </ConversationsSheet>
-              <span className="flex-9 line-clamp-2">
-                {conversation === undefined ? (
-                  <Skeleton className="h-4 w-[200px]" />
-                ) : (
-                  <>{conversation.title}</>
-                )}
-              </span>
+              <span className="flex-9 line-clamp-2">New conversation</span>
             </CardTitle>
           </CardHeader>
           <Divider />
@@ -173,11 +150,11 @@ function ProjectDetailsConversationsPage({
             <MessagesClientList
               {...{
                 messages,
-                isLoading,
+                isLoading: false,
                 currentUserId,
                 incomingAIWord,
                 AIStatus,
-                conversationId: conversation?.id,
+                conversationId,
               }}
             />
           </CardContent>
@@ -238,8 +215,6 @@ function ProjectDetailsConversationsPage({
             <ProjectConversationsList
               {...{
                 projectId: project?.id,
-                conversation,
-                setConversation,
                 defaultConversationId,
               }}
             />
@@ -254,13 +229,7 @@ function ProjectDetailsConversationsPage({
         >
           <CardHeader className="p-2 gap-0">
             <CardTitle className="h-[32px] flex items-center px-2 py-6 gap-2">
-              <span className="flex-9 line-clamp-2">
-                {conversation === undefined ? (
-                  <Skeleton className="h-4 w-[200px]" />
-                ) : (
-                  <>{conversation?.title}</>
-                )}
-              </span>
+              <span className="flex-9 line-clamp-2">New conversation</span>
             </CardTitle>
           </CardHeader>
           <Divider />
@@ -268,11 +237,11 @@ function ProjectDetailsConversationsPage({
             <MessagesClientList
               {...{
                 messages,
-                isLoading,
+                isLoading: false,
                 currentUserId,
                 incomingAIWord,
                 AIStatus,
-                conversationId: conversation?.id,
+                conversationId,
               }}
             />
           </CardContent>

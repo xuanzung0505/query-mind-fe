@@ -12,6 +12,7 @@ import { ConversationType } from "@/types/ConversationType";
 import { clientApiFetch } from "@/utils/clientApiFetch";
 import dayjs from "@/utils/dayjs";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import React, { useEffect } from "react";
 
 function ProjectConversationsList({
@@ -21,11 +22,11 @@ function ProjectConversationsList({
   defaultConversationId,
 }: {
   projectId?: string;
-  conversation: ConversationType | undefined;
-  setConversation: React.Dispatch<
+  conversation?: ConversationType;
+  setConversation?: React.Dispatch<
     React.SetStateAction<ConversationType | undefined>
   >;
-  defaultConversationId: string | undefined;
+  defaultConversationId?: string | "new";
 }) {
   const {
     isLoading,
@@ -45,12 +46,17 @@ function ProjectConversationsList({
   });
 
   useEffect(() => {
-    if (isFetched && Array.isArray(conversations)) {
-      setConversation(
-        defaultConversationId
-          ? conversations.find((convo) => convo.id === defaultConversationId)
-          : conversations.at(0)
-      );
+    if (
+      isFetched &&
+      Array.isArray(conversations) &&
+      defaultConversationId !== "new"
+    ) {
+      if (setConversation)
+        setConversation(
+          defaultConversationId
+            ? conversations.find((convo) => convo.id === defaultConversationId)
+            : conversations.at(0)
+        );
     }
   }, [isFetched, conversations, setConversation, defaultConversationId]);
 
@@ -80,23 +86,27 @@ function ProjectConversationsList({
       {Array.isArray(conversations) &&
         conversations.length > 0 &&
         conversations.map((convo) => (
-          <Item
+          <Link
+            href={`/projects/${projectId}/conversations/${convo.id}`}
             key={convo.id}
-            className={cn(
-              `border-1 cursor-pointer transition-transform hover:bg-neutral-100
-                 active:bg-neutral-200 ease-in-out`,
-              convo.id === conversation?.id ? "bg-neutral-100!" : ""
-            )}
           >
-            <ItemContent>
-              <ItemTitle className="responsive-text">{convo.title}</ItemTitle>
-              <ItemDescription className="responsive-text text-wrap">
-                <span className="text-neutral-500">
-                  {dayjs(convo.lastMessageCreatedAt).calendar()}
-                </span>
-              </ItemDescription>
-            </ItemContent>
-          </Item>
+            <Item
+              className={cn(
+                `border-1 cursor-pointer transition-transform hover:bg-neutral-100
+                 active:bg-neutral-200 ease-in-out`,
+                convo.id === conversation?.id ? "bg-neutral-100!" : ""
+              )}
+            >
+              <ItemContent>
+                <ItemTitle className="responsive-text">{convo.title}</ItemTitle>
+                <ItemDescription className="responsive-text text-wrap">
+                  <span className="text-neutral-500">
+                    {dayjs(convo.lastMessageCreatedAt).calendar()}
+                  </span>
+                </ItemDescription>
+              </ItemContent>
+            </Item>
+          </Link>
         ))}
     </>
   );
