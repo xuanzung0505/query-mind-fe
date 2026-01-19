@@ -3,6 +3,7 @@ import customMiddleware from "@/app/functions/customMiddleware";
 import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
 import { getConversationById } from "@/db/conversations";
+import { createAMessage } from "@/db/messages";
 import { chunkedFiles_collection, dbName, getEmbedding } from "@/db/mongo";
 import { UserType } from "@/types/UserType";
 import isAuthError from "@/utils/isAuthError";
@@ -38,6 +39,12 @@ export async function POST(
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    await createAMessage({
+      conversationId: conversation.id,
+      text: query,
+      createdById: decodedAccessToken.id,
+    });
 
     // begin querying
     let prompt = query;
@@ -115,6 +122,12 @@ export async function POST(
             controller.enqueue(`data: ${JSON.stringify(event)}\n\n`);
           // save message
           if (event.type === "response.output_text.done") {
+            // Add the response message
+            await createAMessage({
+              conversationId: conversation.id,
+              text: event.text,
+              createdById: "AI",
+            });
           }
           // close the connection
           if (event.type === "response.completed") {

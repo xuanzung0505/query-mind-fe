@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       input: [
         {
           role: "user",
-          content: `Generate a title for a conversation between a user and a chatbot, which is initiated by the user with the following message:
+          content: `Generate a title for a conversation (without quotes), which is initiated with the following message:
              ${query}`,
         },
       ],
@@ -52,12 +52,6 @@ export async function POST(request: Request) {
         createdById: decodedAccessToken.id,
       })
     );
-    // Add the 1st message
-    await createAMessage({
-      conversationId: conversation.id,
-      text: query,
-      createdById: decodedAccessToken.id,
-    });
 
     // User must be conversation owner or belongs to the project
     if (
@@ -70,6 +64,13 @@ export async function POST(request: Request) {
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    // Add the 1st message
+    await createAMessage({
+      conversationId: conversation.id,
+      text: query,
+      createdById: decodedAccessToken.id,
+    });
 
     // begin querying
     let prompt = query;

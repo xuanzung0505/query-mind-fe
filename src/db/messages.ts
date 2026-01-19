@@ -31,7 +31,11 @@ const getMessages = async ({ conversationId }: { conversationId: string }) => {
   const filteredMessages = messages.filter(
     (message) => message.conversationId === conversationId
   );
-  filteredMessages.sort((msg1, msg2) => (msg2.id > msg1.id ? 1 : -1)); // TODO: fix later
+  filteredMessages.sort((msg1, msg2) =>
+    new Date(msg1.createdAt).getTime() < new Date(msg2.createdAt).getTime()
+      ? 1
+      : -1
+  ); // TODO: fix later
   return filteredMessages;
 };
 
