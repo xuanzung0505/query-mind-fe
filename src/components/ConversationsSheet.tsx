@@ -10,7 +10,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { MessageSquareText } from "lucide-react";
+import { MessageCirclePlus, MessageSquareText } from "lucide-react";
+import Link from "next/link";
 
 /**
  *
@@ -18,10 +19,12 @@ import { MessageSquareText } from "lucide-react";
  */
 function ConversationsSheet({
   title,
+  projectId,
   defaultOpen,
   children,
 }: {
   title: string;
+  projectId: string;
   defaultOpen: boolean;
   children: React.ReactNode;
 }) {
@@ -41,7 +44,12 @@ function ConversationsSheet({
         </div>
         <SheetFooter>
           <SheetClose asChild>
-            <PrimaryButton>Close</PrimaryButton>
+            <Link href={`/projects/${projectId}/conversations/new`}>
+              <PrimaryButton additionalClassName="w-full">
+                <MessageCirclePlus />
+                Create new conversation
+              </PrimaryButton>
+            </Link>
           </SheetClose>
         </SheetFooter>
       </SheetContent>

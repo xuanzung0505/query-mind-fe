@@ -147,6 +147,7 @@ function ProjectDetailsConversationsPage({
           <CardHeader className="p-0 gap-0">
             <CardTitle className="h-[32px] flex items-center px-2 py-6 gap-2">
               <ConversationsSheet
+                projectId={projectId}
                 title="Conversations in this project"
                 defaultOpen={true}
               >
