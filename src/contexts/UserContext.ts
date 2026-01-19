@@ -1,5 +1,7 @@
-import { createContext } from "react";
+import { UserType } from "@/types/UserType";
+import { createContext, Dispatch, SetStateAction } from "react";
 
 export const UserContext = createContext<{
-  userId: string;
-}>({ userId: "" });
+  user?: UserType;
+  setUser?: Dispatch<SetStateAction<UserType | undefined>>;
+}>({ user: undefined, setUser: undefined });

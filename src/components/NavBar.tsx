@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Brand from "./Brand";
@@ -9,6 +9,11 @@ import { cn } from "@/lib/utils";
 import { SidebarTrigger } from "./ui/sidebar";
 import Image from "next/image";
 import { Avatar } from "./ui/avatar";
+import { UserContext } from "@/contexts/UserContext";
+import { UserType } from "@/types/UserType";
+import { clientApiFetch } from "@/utils/clientApiFetch";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "./ui/skeleton";
 
 const BrandButtonNavBar = (props: {
   className: string;
@@ -23,13 +28,29 @@ const BrandButtonNavBar = (props: {
 };
 
 function NavBar() {
+  const { setUser } = useContext(UserContext);
   const pathname = usePathname();
-  const parentDir = pathname.split("/")[1];
-  const activeButtonClass = "opacity-100";
-  const menuList = [
-    { title: "Conversations", url: "/conversations" },
-    { title: "Projects", url: "/projects" },
-  ];
+  // const parentDir = pathname.split("/")[1];
+  // const activeButtonClass = "opacity-100";
+  // const menuList = [
+  //   { title: "Conversations", url: "/conversations" },
+  //   { title: "Projects", url: "/projects" },
+  // ];
+
+  const { isLoading, isFetched, data } = useQuery({
+    queryKey: ["me"],
+    queryFn: () =>
+      clientApiFetch<UserType>(`${process.env.NEXT_PUBLIC_HOST_URL}/api/me`, {
+        method: "GET",
+      }),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  useEffect(() => {
+    if (isFetched && setUser) {
+      setUser(data);
+    }
+  }, [setUser, isFetched, data]);
 
   return (
     <div
@@ -43,14 +64,16 @@ function NavBar() {
       <BrandButtonNavBar {...{ pathname, className: "flex justify-center" }} />
       <div className="flex justify-end">
         <Avatar className="rounded-full">
-          <Image
-            src={
-              "https://lh3.googleusercontent.com/a/ACg8ocIMhnvazXFsi7p-5zN2qeTgn_m-q5RCRViXduFn2fohYDY-fD_B=s96-c"
-            }
-            alt="creator-avatar"
-            width={200}
-            height={200}
-          />
+          {isLoading ? (
+            <Skeleton className="h-[250px] w-[250px] rounded-full" />
+          ) : (
+            <Image
+              src={(data as UserType).avatarUrl}
+              alt="creator-avatar"
+              width={200}
+              height={200}
+            />
+          )}
         </Avatar>
       </div>
       {/* <div className="flex text-sm sm:text-base sm:gap-2 md:gap-4 justify-center lg:gap-6">

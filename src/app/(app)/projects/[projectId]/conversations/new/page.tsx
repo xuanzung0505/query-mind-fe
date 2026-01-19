@@ -38,7 +38,7 @@ function ProjectDetailsConversationsPage({
   const { projectId } = use(params);
   const defaultConversationId = "new";
   const router = useRouter();
-  const { userId: currentUserId } = useContext(UserContext);
+  const currentUserId = useContext(UserContext).user?.id;
   const conversationRef = useRef<undefined | ConversationType>(undefined);
   const conversationId = undefined;
 
@@ -65,7 +65,12 @@ function ProjectDetailsConversationsPage({
   const isMobile = useIsMobile();
 
   const handleSendMessage = () => {
-    if (isProjectLoading || message.trim() === "") return;
+    if (
+      isProjectLoading ||
+      message.trim() === "" ||
+      currentUserId === undefined
+    )
+      return;
     setMessages([
       {
         id: crypto.randomUUID(),

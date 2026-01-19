@@ -53,7 +53,7 @@ function ConversationDetailsPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { userId: currentUserId } = useContext(UserContext);
+  const currentUserId = useContext(UserContext).user?.id;
   const { id: conversationId } = use(params);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<MessageType[]>([]);
@@ -87,7 +87,13 @@ function ConversationDetailsPage({
   }, [isFetched, queriedMessages]);
 
   const handleSendMessage = () => {
-    if (isLoading || isConversationLoading || message.trim() === "") return;
+    if (
+      isLoading ||
+      isConversationLoading ||
+      message.trim() === "" ||
+      currentUserId === undefined
+    )
+      return;
     setMessages([
       {
         id: crypto.randomUUID(),

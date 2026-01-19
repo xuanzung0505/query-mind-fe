@@ -42,7 +42,7 @@ function ProjectDetailsConversationsPage({
     ? listSegments[0]
     : undefined;
   const router = useRouter();
-  const { userId: currentUserId } = useContext(UserContext);
+  const currentUserId = useContext(UserContext).user?.id;
   const { isProjectLoading, project } = useContext(ProjectContext);
   const [conversation, setConversation] = useState<
     undefined | ConversationType
@@ -81,7 +81,13 @@ function ProjectDetailsConversationsPage({
   }, [isFetched, queriedMessages]);
 
   const handleSendMessage = () => {
-    if (isLoading || isProjectLoading || message.trim() === "") return;
+    if (
+      isLoading ||
+      isProjectLoading ||
+      message.trim() === "" ||
+      currentUserId === undefined
+    )
+      return;
     setMessages([
       {
         id: crypto.randomUUID(),

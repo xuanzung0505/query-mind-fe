@@ -22,12 +22,15 @@ function MessagesClientList({
 }: {
   isLoading: boolean;
   messages: MessageType[];
-  currentUserId: string;
+  currentUserId: string | undefined;
   incomingAIWord: string;
   AIStatus: string;
   conversationId: string | undefined;
 }) {
-  if (isLoading && conversationId !== undefined)
+  if (
+    (isLoading && conversationId === undefined) ||
+    currentUserId === undefined
+  )
     return (
       <>
         {Array(6)

@@ -25,7 +25,7 @@ import { UserContext } from "@/contexts/UserContext";
 
 function ConversationDetailsPage() {
   const router = useRouter();
-  const { userId: currentUserId } = useContext(UserContext);
+  const currentUserId = useContext(UserContext).user?.id;
   const conversationRef = useRef<undefined | ConversationType>(undefined);
   const conversationId = undefined;
   const [message, setMessage] = useState("");
@@ -47,7 +47,7 @@ function ConversationDetailsPage() {
   } = useRetrieveAIReply();
 
   const handleSendMessage = () => {
-    if (message.trim() === "") return;
+    if (message.trim() === "" || currentUserId === undefined) return;
     setMessages([
       {
         id: crypto.randomUUID(),
