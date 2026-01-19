@@ -8,7 +8,7 @@ const getProjects = async ({ userId }: { userId: string }) => {
       "Content-Type": "application/json",
     },
   });
-  // TODO: filter later
+  // TODO: filter projects later
   const projects = (await res.json()) as ProjectType[];
   return projects.filter(
     (project) =>

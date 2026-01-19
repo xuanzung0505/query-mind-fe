@@ -2,16 +2,24 @@ import customMiddleware from "@/app/functions/customMiddleware";
 import { MessageEnum } from "@/const/MessageEnum";
 import { StatusCodeEnum } from "@/const/StatusCodeEnum";
 import { getConversations } from "@/db/conversations";
+import { UserType } from "@/types/UserType";
 import isAuthError from "@/utils/isAuthError";
+import { jwtDecode } from "jwt-decode";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await customMiddleware(request);
+    const credentials = await customMiddleware(request);
+    const decodedAccessToken = jwtDecode(
+      credentials.access_token as string
+    ) as UserType;
     const { id: projectId } = await params;
-    const conversations = await getConversations({ projectId });
+    const conversations = await getConversations({
+      userId: decodedAccessToken.id,
+      projectId,
+    });
     return new Response(JSON.stringify(conversations), {
       status: StatusCodeEnum.OK,
       headers: { "Content-Type": "application/json" },
