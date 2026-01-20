@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { serverApiFetch } from "@/utils/serverApiFetch";
 import { Plus } from "lucide-react";
 import PrimaryButton from "@/components/PrimaryButton";
 import Link from "next/link";
@@ -11,16 +10,6 @@ import Link from "next/link";
 // };
 
 export default async function HomePage() {
-  // TEST SUSPENSE BOUNDARY
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const users = await serverApiFetch<unknown>(
-    `${process.env.NEXT_PUBLIC_HOST_URL}/api/users`,
-    {
-      method: "GET",
-      credentials: "include",
-    }
-  );
-
   return (
     <div className="homepage p-2">
       <div className="flex flex-col items-center justify-center my-8">
