@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import BrandMark from "@/components/BrandMark";
 import GoogleOAuthButton from "@/components/GoogleOAuthButton";
-import { serverApiFetch } from "@/utils/serverApiFetch";
-import { UserType } from "@/types/UserType";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: "Query Mind sign-in",
@@ -11,15 +10,11 @@ export const metadata: Metadata = {
 };
 
 export default async function SignInPage() {
-  const credentials = await serverApiFetch<UserType | undefined>(
-    `${process.env.NEXT_PUBLIC_HOST_URL}/api/users`,
-    {
-      method: "GET",
-    },
-  );
-  if (credentials !== undefined) {
-    redirect("/");
-  }
+  const response = await fetch(`${process.env.NEXT_PUBLIC_HOST_URL}/api/me`, {
+    method: "GET",
+    headers: { Cookie: (await cookies()).toString() },
+  });
+  if (response.ok) redirect("/");
 
   return (
     <main className="min-h-screen bg-white flex items-center justify-center px-6">
