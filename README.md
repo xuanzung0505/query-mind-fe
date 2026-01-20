@@ -167,9 +167,12 @@ redis-cli
 ### Pick the method
 - We will choose the Conversation API, OpenAI charges on how large the context window is. This method removes the step to manual include information about previous inputs and responses, no additional billings incur.
 
-## Edge cases
+## Edge cases and improvement
 
 1. Redis server is shut down unexpectedly -> Jobs will run and skip cache
 2. RabbitMQ broker is shut down -> Queue is reserved on broker restart
 3. A spike in the number of spawn threads -> Control the number of workers
 4. Graceful error handling
+5. Sending sensitive data over third-party LLM models
+6. Scale the application: utilize all CPUs, add more servers, add load balancing, ...
+7. Refer to different caching techniques, concepts related to RAG, and more
