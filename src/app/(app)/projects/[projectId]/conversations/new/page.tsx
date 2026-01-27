@@ -68,7 +68,8 @@ function ProjectDetailsConversationsPage({
     if (
       isProjectLoading ||
       message.trim() === "" ||
-      currentUserId === undefined
+      currentUserId === undefined ||
+      AIStatus === StreamStatus.LOADING
     )
       return;
     setMessages([
@@ -88,7 +89,7 @@ function ProjectDetailsConversationsPage({
       status: AIStatus,
       setStatus: setAIStatus,
       handleEvent: (
-        parsedEvent: OpenAI.Responses.ResponseStreamEvent | CustomEventType
+        parsedEvent: OpenAI.Responses.ResponseStreamEvent | CustomEventType,
       ) => {
         if (parsedEvent.type === "conversation.created") {
           conversationRef.current = parsedEvent.data.conversation;
@@ -101,7 +102,7 @@ function ProjectDetailsConversationsPage({
         if (parsedEvent.type === "response.completed") {
           if (conversationRef.current) {
             router.replace(
-              `/projects/${projectId}/conversations/${conversationRef.current.id}`
+              `/projects/${projectId}/conversations/${conversationRef.current.id}`,
             );
           }
         }

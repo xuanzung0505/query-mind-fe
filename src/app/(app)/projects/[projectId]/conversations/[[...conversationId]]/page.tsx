@@ -61,7 +61,7 @@ function ProjectDetailsConversationsPage({
         `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversation?.id}/messages`,
         {
           method: "GET",
-        }
+        },
       ),
     enabled: conversation !== undefined,
   });
@@ -85,7 +85,8 @@ function ProjectDetailsConversationsPage({
       isLoading ||
       isProjectLoading ||
       message.trim() === "" ||
-      currentUserId === undefined
+      currentUserId === undefined ||
+      AIStatus === StreamStatus.LOADING
     )
       return;
     setMessages([
@@ -121,7 +122,7 @@ function ProjectDetailsConversationsPage({
   useEffect(() => {
     if (project !== undefined && conversation !== undefined) {
       router.replace(
-        `/projects/${project.id}/conversations/${conversation.id}`
+        `/projects/${project.id}/conversations/${conversation.id}`,
       );
     }
   }, [router, project, conversation]);

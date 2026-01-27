@@ -40,7 +40,7 @@ function useConversationDetails({
         `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversationId}`,
         {
           method: "GET",
-        }
+        },
       ),
     staleTime: 60 * 1000,
   });
@@ -70,7 +70,7 @@ function ConversationDetailsPage({
         `${process.env.NEXT_PUBLIC_HOST_URL}/api/conversations/${conversationId}/messages`,
         {
           method: "GET",
-        }
+        },
       ),
   });
   const {
@@ -91,7 +91,8 @@ function ConversationDetailsPage({
       isLoading ||
       isConversationLoading ||
       message.trim() === "" ||
-      currentUserId === undefined
+      currentUserId === undefined ||
+      AIStatus === StreamStatus.LOADING
     )
       return;
     setMessages([

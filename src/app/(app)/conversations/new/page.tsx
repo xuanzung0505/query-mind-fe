@@ -47,7 +47,7 @@ function ConversationDetailsPage() {
   } = useRetrieveAIReply();
 
   const handleSendMessage = () => {
-    if (message.trim() === "" || currentUserId === undefined) return;
+    if (message.trim() === "" || currentUserId === undefined || AIStatus === StreamStatus.LOADING) return;
     setMessages([
       {
         id: crypto.randomUUID(),
