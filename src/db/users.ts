@@ -40,7 +40,7 @@ const getUserByGoogleSub = async (googleSub: string) => {
 };
 
 const createOrGetUser = async (
-  payload: Omit<UserType, "id" | "createdAt" | "updatedAt">
+  payload: Omit<UserType, "id" | "createdAt" | "updatedAt">,
 ) => {
   const { googleSub } = payload;
   const user = await getUserByGoogleSub(googleSub);

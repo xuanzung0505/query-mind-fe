@@ -167,6 +167,11 @@ redis-cli
 ### Pick the method
 - We will choose the Conversation API, OpenAI charges on how large the context window is. This method removes the step to manual include information about previous inputs and responses, no additional billings incur.
 
+## Running on Docker
+- We will build the nextjs app with standalone:true, remember to copy /.next/static and /public to the image.
+- Make sure the app always run on 0.0.0.0 (set the HOSTNAME env variable as empty for the new container).
+- Nextjs app only accepts .env.production on build, make sure to check this file when build the image for inter-container communication.
+
 ## Edge cases and improvement
 
 1. Redis server is shut down unexpectedly -> Jobs will run and skip cache

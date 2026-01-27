@@ -1,0 +1,14 @@
+
+services:
+  querymind-fe:
+    image: nextjs-docker-image:latest
+    container_name: querymind-fe
+    ports:
+      - "3000:3000" # Maps host port 3000 to container port 3000 (for external access)
+    environment:
+      - HOSTNAME=
+  fake-server:
+    image: fake-server-image:latest
+    container_name: fake-server
+    ports:
+      - "4000:4000" # Maps host port 4000 to container port 4000 (for external access)
