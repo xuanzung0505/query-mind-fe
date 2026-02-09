@@ -6,8 +6,9 @@
     "dev": "next dev",
     "debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
+    "build:standalone": "next build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "start": "next start",
-    "start:standalone": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
+    "start:standalone": "node .next/standalone/server.js",
     "lint": "next lint"
   },
   "dependencies": {
